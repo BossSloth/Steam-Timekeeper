@@ -1,5 +1,6 @@
 import React, { useMemo, useState } from 'react';
-import { Day, getDuration, type GameSession } from './Types';
+import { MOCK_APP_DATA } from './MockSessions';
+import { AppData, Day, getDuration, type GameSession } from './Types';
 
 const DAYS = Object.values(Day);
 
@@ -229,7 +230,11 @@ export function TimeManager({ sessions }: TimeManagerProps): React.ReactNode {
   }
 
   function getTotalAchievements(): number {
-    return weekSessions.reduce((acc, session) => acc + session.achievements.length, 0);
+    return weekSessions.reduce((acc, session) => acc + session.achievementEntries.length, 0);
+  }
+
+  function getAppData(appId: string): AppData | undefined {
+    return MOCK_APP_DATA[appId];
   }
 
   return (
@@ -354,12 +359,13 @@ export function TimeManager({ sessions }: TimeManagerProps): React.ReactNode {
                     />
                   )}
                   {daySessions.map((session) => {
+                    const appData = getAppData(session.appId);
                     const position = getSessionPosition(session, dayDate);
                     const { sessionStartDay, sessionEndDay, spansMidnight } = getSessionDayInfo(session);
                     const dayTime = getDateAtMidnight(dayDate);
                     const isStartDay = spansMidnight && dayTime.getTime() === sessionStartDay.getTime();
                     const isEndDay = spansMidnight && dayTime.getTime() === sessionEndDay.getTime();
-                    const gameColor = getGameColor(session.gameName);
+                    const gameColor = getGameColor(appData?.name ?? session.appId);
                     const isHovered = hoveredSessionId === session.id;
 
                     // In split mode: top row for end-day sessions, bottom row for start-day/normal sessions
@@ -393,9 +399,9 @@ export function TimeManager({ sessions }: TimeManagerProps): React.ReactNode {
                         }}
                       >
                         <div className="tm-session-content">
-                          <span className="tm-session-icon">{session.gameIcon}</span>
+                          <span className="tm-session-icon">{appData?.icon}</span>
                           <div className="tm-session-info">
-                            <div className="tm-session-name">{session.gameName}</div>
+                            <div className="tm-session-name">{appData?.name}</div>
                             <div className="tm-session-time">{formatDuration(getDuration(session))}</div>
                           </div>
                         </div>
@@ -414,9 +420,9 @@ export function TimeManager({ sessions }: TimeManagerProps): React.ReactNode {
         <div className="tm-details-panel">
           <div className="tm-details-header">
             <div className="tm-details-game">
-              <span className="tm-details-icon">{selectedSession.gameIcon}</span>
+              <span className="tm-details-icon">{getAppData(selectedSession.appId)?.icon}</span>
               <div>
-                <h2 className="tm-details-title">{selectedSession.gameName}</h2>
+                <h2 className="tm-details-title">{getAppData(selectedSession.appId)?.name}</h2>
                 <p className="tm-details-subtitle">
                   {formatTime(selectedSession.startTime)} - {formatTime(selectedSession.endTime)} • {formatDuration(getDuration(selectedSession))}
                 </p>
@@ -434,22 +440,29 @@ export function TimeManager({ sessions }: TimeManagerProps): React.ReactNode {
           </div>
 
           <div className="tm-details-body">
-            {selectedSession.achievements.length > 0
+            {selectedSession.achievementEntries.length > 0
               ? (
                   <>
                     <h3 className="tm-details-section-title">
-                      Achievements Unlocked ({selectedSession.achievements.length})
+                      Achievements Unlocked ({selectedSession.achievementEntries.length})
                     </h3>
                     <div className="tm-achievements">
-                      {selectedSession.achievements.map(achievement => (
-                        <div key={achievement.id} className="tm-achievement">
-                          <span className="tm-achievement-icon">{achievement.icon}</span>
-                          <div className="tm-achievement-info">
-                            <div className="tm-achievement-name">{achievement.name}</div>
-                            <div className="tm-achievement-desc">{achievement.description}</div>
+                      {selectedSession.achievementEntries.map((entry) => {
+                        const appData = getAppData(selectedSession.appId);
+                        const achievement = appData?.achievements.find(ach => ach.strID === entry.achievementId);
+
+                        return (
+                          <div key={entry.id} className="tm-achievement">
+                            <span className="tm-achievement-icon">🏆</span>
+                            <div className="tm-achievement-info">
+                              <div className="tm-achievement-name">{achievement?.strName ?? entry.achievementId}</div>
+                              <div className="tm-achievement-desc">
+                                {achievement?.strDescription}
+                              </div>
+                            </div>
                           </div>
-                        </div>
-                      ))}
+                        );
+                      })}
                     </div>
                   </>
                 )

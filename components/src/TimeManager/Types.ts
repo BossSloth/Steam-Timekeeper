@@ -1,3 +1,6 @@
+import { TimelineEntryType } from 'steam-types';
+import { PlayerAchievement } from 'steam-types/Global/stores/AppDetailsStore';
+
 export interface Achievement {
   description: string;
   icon: string;
@@ -6,13 +9,41 @@ export interface Achievement {
   unlocked: boolean;
 }
 
-export interface GameSession {
-  achievements: Achievement[];
-  endTime: Date;
-  gameIcon: string;
-  gameName: string;
+export interface TimelineEntry {
   id: string;
+  time: Date;
+  type: TimelineEntryType;
+}
+
+export interface MarkerTimelineEntry extends TimelineEntry {
+  markerDescription: string;
+  markerIcon: string;
+  markerPriority: number;
+  rangeTitle: string;
+  type: TimelineEntryType.Event;
+}
+
+export interface AchievementTimelineEntry extends TimelineEntry {
+  /** the id of the steam achievement */
+  achievementId: string;
+  type: TimelineEntryType.Achievement;
+}
+
+export interface GameSession {
+  achievementEntries: AchievementTimelineEntry[];
+  appId: string;
+  endTime: Date;
+  id: string;
+  markerEntries: MarkerTimelineEntry[];
   startTime: Date;
+}
+
+export interface AppData {
+  /** SteamClient.Apps.GetMyAchievementsForApp() */
+  achievements: PlayerAchievement[];
+  appId: string;
+  icon: string;
+  name: string;
 }
 
 /**

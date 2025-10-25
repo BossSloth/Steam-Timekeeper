@@ -14,7 +14,7 @@
         "@vitejs/plugin-react": "^5.1.0",
         "globals": "^16.4.0",
         "sass": "^1.93.2",
-        "steam-types": "^1.0.1",
+        "steam-types": "^1.0.2",
         "typescript": "~5.9.3",
         "vite": "npm:rolldown-vite@7.1.14",
       },
@@ -290,7 +290,7 @@
 
     "source-map-support": ["source-map-support@0.5.21", "", { "dependencies": { "buffer-from": "^1.0.0", "source-map": "^0.6.0" } }, "sha512-uBHU3L3czsIyYXKX88fdrGovxdSCoTGDRZ6SYXtSRxLZUzHg5P/66Ht6uoUlHu9EZod+inXhKo3qQgwXUT/y1w=="],
 
-    "steam-types": ["steam-types@1.0.1", "", { "dependencies": { "@types/google-protobuf": "^3.15.12", "@types/react-dom": "^19.2.2", "long": "^5.3.2", "mobx": "^6.15.0" }, "peerDependencies": { "@steambrew/client": "^5.8.0" }, "optionalPeers": ["@steambrew/client"] }, "sha512-U1KsFKAYH6ZTgOyH4Jo1ucdHN1JUqcz+L4UBbcb+atwKUGJ3ijryUdzgvuQ1bghkpQU6jrOfbD3WipW+Mc5aqQ=="],
+    "steam-types": ["steam-types@1.0.2", "", { "dependencies": { "@types/google-protobuf": "^3.15.12", "@types/react-dom": "^19.2.2", "long": "^5.3.2", "mobx": "^6.15.0" }, "peerDependencies": { "@steambrew/client": "^5.8.0" }, "optionalPeers": ["@steambrew/client"] }, "sha512-G7evEZ5G2lmuLvzCIO8HN7EeVqyqqvUYoH67SUJDfZZWOv7ktQqTHcyv5qQfZJWL4Tkmag+NWFUAs1n+oOhGDw=="],
 
     "terser": ["terser@5.44.0", "", { "dependencies": { "@jridgewell/source-map": "^0.3.3", "acorn": "^8.15.0", "commander": "^2.20.0", "source-map-support": "~0.5.20" }, "bin": { "terser": "bin/terser" } }, "sha512-nIVck8DK+GM/0Frwd+nIhZ84pR/BX7rmXMfYwyg+Sri5oGVE99/E3KvXqpC2xHFxyqXyGHTKBSioxxplrO4I4w=="],
 

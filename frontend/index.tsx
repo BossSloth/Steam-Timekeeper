@@ -1,6 +1,7 @@
 import { OnPopupCreation } from 'onPopupCreation';
 import { startCheckRunningApps } from 'runningApps';
-import { CGameRecording_TimelineEntryChanged_Notification, gameRecordingRequestHandler } from 'steam-types';
+import { CGameRecording_TimelineEntryChanged_Notification } from 'steam-types';
+import { gameRecordingRequestHandler } from 'steam-types/Runtime';
 import { ProtobufNotification } from 'steam-types/types/shared/protobuf';
 import './components/TimePopup';
 
