@@ -1,4 +1,4 @@
-@use "./TimeManager/TimeManager.scss";
+@import "./TimeManager/TimeManager.css";
 
 :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;

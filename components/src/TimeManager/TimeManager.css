@@ -36,7 +36,7 @@
   }
 }
 
-// Header
+/* Header */
 .tm-header {
   margin-bottom: 32px;
 }
@@ -99,7 +99,7 @@
   text-align: center;
 }
 
-// Stats
+/* Stats */
 .tm-stats {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -139,7 +139,7 @@
   letter-spacing: 1px;
 }
 
-// Timeline
+/* Timeline */
 .tm-timeline {
   background: var(--bg-elevated);
   border: 1px solid var(--border-medium);
@@ -152,7 +152,7 @@
     0 1px 2px rgba(0, 0, 0, 0.2);
   position: relative;
 
-  // Subtle glow effect
+  /* Subtle glow effect */
   &::before {
     content: '';
     position: absolute;
@@ -208,7 +208,7 @@
   }
 }
 
-// Days and sessions
+/* Days and sessions */
 .tm-days {
   position: relative;
 }
@@ -256,7 +256,7 @@
   position: relative;
   padding: 8px 0;
 
-  // Hour grid lines
+  /* Hour grid lines */
   &::before {
     content: '';
     position: absolute;
@@ -275,7 +275,7 @@
     pointer-events: none;
   }
 
-  // Midnight marker (12 AM) - solid vertical line
+  /* Midnight marker (12 AM) - solid vertical line */
   &::after {
     content: '';
     position: absolute;
@@ -285,17 +285,17 @@
     background: rgb(115 117 125);
     pointer-events: none;
     z-index: 1;
-    // Use CSS variable for dynamic positioning based on timeline start
+    /* Use CSS variable for dynamic positioning based on timeline start */
     left: var(--midnight-position, 0);
   }
 
 
-  // Split track for days with midnight-spanning sessions
+  /* Split track for days with midnight-spanning sessions */
   &.tm-sessions-track-split {
-    min-height: 132px; // Two rows: 54px (session) + 8px (padding) = 62px per row, plus 8px top/bottom padding
+    min-height: 132px; /* Two rows: 54px (session) + 8px (padding) = 62px per row, plus 8px top/bottom padding */
     padding: 8px 0;
 
-    // Add visual divider between top and bottom sections using background image
+    /* Add visual divider between top and bottom sections using background image */
     background-image:
       linear-gradient(
         to right,
@@ -310,7 +310,7 @@
   }
 }
 
-// Current time indicator - real DOM element
+/* Current time indicator - real DOM element */
 .tm-current-time-indicator {
   position: absolute;
   top: 0;
@@ -339,12 +339,12 @@
   }
 }
 
-// Session block
+/* Session block */
 .tm-session {
   position: absolute;
-  // top and bottom are set inline based on session type
-  height: 52px; // Fixed height for consistency
-  // Use CSS variable for game-specific color
+  /* top and bottom are set inline based on session type */
+  height: 52px; /* Fixed height for consistency */
+  /* Use CSS variable for game-specific color */
   background: linear-gradient(135deg,
     var(--game-color, var(--accent)) 0%,
     color-mix(in srgb, var(--game-color, var(--accent)) 85%, black) 100%);
@@ -387,12 +387,12 @@
     z-index: 6;
   }
 
-  // Session that continues to next day (ends at midnight)
+  /* Session that continues to next day (ends at midnight) */
   &.tm-session-continues {
     border-top-right-radius: 0;
     border-bottom-right-radius: 0;
 
-    // Arrow pointing to next day's continuation
+    /* Arrow pointing to next day's continuation */
     &::after {
       content: '';
       position: absolute;
@@ -409,7 +409,7 @@
     }
   }
 
-  // Session that continued from previous day (starts at midnight)
+  /* Session that continued from previous day (starts at midnight) */
   &.tm-session-continued {
     border-top-left-radius: 0;
     border-bottom-left-radius: 0;
@@ -451,7 +451,7 @@
   white-space: nowrap;
 }
 
-// Details panel
+/* Details panel */
 .tm-details-panel {
   background: linear-gradient(135deg, var(--bg) 0%, var(--bg-light) 100%);
   border: 1px solid var(--border-medium);
@@ -551,7 +551,7 @@
   letter-spacing: 1px;
 }
 
-// Achievements
+/* Achievements */
 .tm-achievements {
   display: grid;
   gap: 12px;
@@ -612,7 +612,7 @@
   }
 }
 
-// Responsive
+/* Responsive */
 @media (max-width: 768px) {
   .time-manager {
     padding: 16px;

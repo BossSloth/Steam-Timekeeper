@@ -1,5 +1,6 @@
-import React, { useMemo, useState } from 'react';
-import { MOCK_APP_DATA } from './MockSessions';
+import React, { useEffect, useMemo, useState } from 'react';
+import { MOCK_APP_DATA, MOCK_SESSIONS } from './MockSessions';
+import { sessionDB } from './SessionDatabase';
 import { AppData, Day, getDuration, type GameSession } from './Types';
 
 const DAYS = Object.values(Day);
@@ -10,9 +11,8 @@ interface SessionDayInfo {
   spansMidnight: boolean;
 }
 
-export interface TimeManagerProps {
-  readonly sessions: GameSession[];
-}
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
+export interface TimeManagerProps {}
 
 // Generate consistent color for a game based on its name
 function getGameColor(gameName: string): string {
@@ -30,10 +30,13 @@ function getGameColor(gameName: string): string {
   return `hsl(${hue}, 75%, 55%)`;
 }
 
-export function TimeManager({ sessions }: TimeManagerProps): React.ReactNode {
+export function TimeManager(): React.ReactNode {
   const [selectedSession, setSelectedSession] = useState<GameSession | null>(null);
   const [hoveredSessionId, setHoveredSessionId] = useState<string | null>(null);
   const [weekStart, setWeekStart] = useState(() => getMonday(new Date()));
+  const [sessions, setSessions] = useState<GameSession[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [timelineStartHour, setTimelineStartHour] = useState(0);
 
   // Calculate week end (Sunday)
   const weekEnd = useMemo(() => {
@@ -44,6 +47,82 @@ export function TimeManager({ sessions }: TimeManagerProps): React.ReactNode {
   }, [weekStart]);
 
   const [currentTime, setCurrentTime] = useState(new Date());
+
+  // Initialize database and load mock data if empty
+  useEffect(() => {
+    async function initDB(): Promise<void> {
+      try {
+        await sessionDB.initialize();
+        const count = await sessionDB.getSessionCount();
+
+        // If database is empty, seed it with mock data
+        if (count === 0) {
+          await sessionDB.addSessions(MOCK_SESSIONS);
+        }
+
+        // Load optimal start hour from database
+        const optimalStartHour = await sessionDB.getOptimalStartHour();
+        setTimelineStartHour(optimalStartHour);
+        setIsLoading(false);
+      } catch (error) {
+        console.error('Failed to initialize database:', error);
+        setIsLoading(false);
+      }
+    }
+
+    initDB().catch((err: unknown) => {
+      console.error('Failed to initialize database:', err);
+    });
+  }, []);
+
+  // Load sessions for the current week
+  useEffect(() => {
+    async function loadWeekSessions(): Promise<void> {
+      try {
+        const start = getDateAtMidnight(weekStart);
+        const end = getDateAtEndOfDay(weekEnd);
+        const weekSessionsData = await sessionDB.getSessionsByDateRange(start, end);
+        setSessions(weekSessionsData);
+      } catch (error) {
+        console.error('Failed to load week sessions:', error);
+      }
+    }
+
+    if (!isLoading) {
+      loadWeekSessions().catch((err: unknown) => {
+        console.error('Failed to load week sessions:', err);
+      });
+    }
+  }, [weekStart, weekEnd, isLoading]);
+
+  // Subscribe to database changes for real-time updates
+  useEffect(() => {
+    async function handleDatabaseChange(): Promise<void> {
+      try {
+        // Reload sessions for current week
+        const start = getDateAtMidnight(weekStart);
+        const end = getDateAtEndOfDay(weekEnd);
+        const weekSessionsData = await sessionDB.getSessionsByDateRange(start, end);
+        setSessions(weekSessionsData);
+
+        // Reload optimal start hour
+        const optimalStartHour = await sessionDB.getOptimalStartHour();
+        setTimelineStartHour(optimalStartHour);
+      } catch (error) {
+        console.error('Failed to reload data after change:', error);
+      }
+    }
+
+    // Subscribe to changes
+    const unsubscribe = sessionDB.addChangeListener(() => {
+      handleDatabaseChange().catch((err: unknown) => {
+        console.error('Failed to handle database change:', err);
+      });
+    });
+
+    // Cleanup subscription on unmount
+    return unsubscribe;
+  }, [weekStart, weekEnd]);
 
   // Update current time every minute
   React.useEffect(() => {
@@ -67,58 +146,6 @@ export function TimeManager({ sessions }: TimeManagerProps): React.ReactNode {
       return sessionDate >= start && sessionDate <= end;
     });
   }, [sessions, weekStart, weekEnd]);
-
-  // Calculate optimal start hour based on gaming patterns
-  const timelineStartHour = useMemo(() => {
-    if (sessions.length === 0) {
-      return 0;
-    }
-
-    // Count session activity for each hour of the day
-    const hourActivity = new Array(24).fill(0) as number[];
-
-    sessions.forEach((session) => {
-      const startHour = session.startTime.getHours();
-      const endHour = session.endTime.getHours();
-      const duration = getDuration(session) / 60; // in hours
-      const { spansMidnight } = getSessionDayInfo(session);
-
-      if (spansMidnight) {
-        // Add activity from start hour to midnight
-        for (let h = startHour; h < 24; h++) {
-          hourActivity[h]++;
-        }
-        // Add activity from midnight to end hour
-        for (let h = 0; h <= endHour; h++) {
-          hourActivity[h]++;
-        }
-      } else {
-        // Normal case: add activity for each hour in the session
-        const sessionHours = Math.ceil(duration);
-        for (let i = 0; i < sessionHours && startHour + i < 24; i++) {
-          hourActivity[(startHour + i) % 24]++;
-        }
-      }
-    });
-
-    // Find the hour with least activity (likely sleep time)
-    let minActivity = Infinity;
-    let quietestHour = 0;
-
-    for (let h = 0; h < 24; h++) {
-      const activity = hourActivity[h] ?? 0;
-      if (activity < minActivity) {
-        minActivity = activity;
-        quietestHour = h;
-      }
-    }
-
-    // Start timeline a few hours before the quietest period ends
-    // This centers active gaming hours
-    const startHour = (quietestHour + 3) % 24;
-
-    return startHour;
-  }, [sessions]);
 
   const visibleHours = Array.from({ length: 24 }, (_, i) => (timelineStartHour + i) % 24);
 
