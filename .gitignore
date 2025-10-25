@@ -1,0 +1,6 @@
+node_modules/
+.venv/
+.millennium/
+build/
+public/steam-timekeeper.css
+metadata.json

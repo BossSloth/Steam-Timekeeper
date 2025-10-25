@@ -1,0 +1,646 @@
+.time-manager {
+  min-height: 100vh;
+  background: linear-gradient(135deg, oklch(0.16 0.015 270) 0%, oklch(0.19 0.01 250) 100%);
+  color: var(--text);
+  font-family: 'Motiva Sans', Arial, Helvetica, sans-serif;
+  padding: 24px;
+
+  --bg-dark: oklch(0.18 0.01 270); /* Very subtle purple tint */
+  --bg: oklch(0.25 0.015 270); /* Slightly lighter with purple tint */
+  --bg-light: oklch(0.35 0.02 270); /* Even lighter */
+  --bg-elevated: oklch(0.22 0.012 270); /* For timeline - between dark and bg */
+  --text: oklch(0.96 0 0);
+  --text-secondary: oklch(0.7 0 0);
+  --text-dim: oklch(0.55 0 0);
+  --accent: oklch(0.65 0.19 200); /* Vibrant cyan-blue */
+  --accent-hover: oklch(0.72 0.22 200);
+  --accent-dim: oklch(0.5 0.15 200);
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  --border-medium: rgba(255, 255, 255, 0.12);
+
+  --shadow-s:
+  inset 0 1px 2px #FFFFFF30, /* top highlight */
+  0 1px 2px #00000030, /* dark shadow */
+  0 2px 4px #00000015; /* soft shadow */
+  --shadow-m:
+  inset 0 1px 2px #FFFFFF50, /* top highlight */
+  0 2px 4px #00000030, /* dark shadow */
+  0 4px 8px #00000015; /* soft shadow */
+  --shadow-l:
+  inset 0 1px 2px #FFFFFF70, /* top highlight */
+  0 4px 6px #00000030, /* dark shadow */
+  0 6px 10px #00000015; /* soft shadow */
+
+  * {
+    box-sizing: border-box;
+  }
+}
+
+// Header
+.tm-header {
+  margin-bottom: 32px;
+}
+
+.tm-header-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.tm-title {
+  font-size: 32px;
+  font-weight: 300;
+  margin: 0;
+  color: var(--text);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+.tm-date-range {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.tm-nav-btn,
+.tm-today-btn {
+  background: var(--bg);
+  border: none;
+  color: var(--text);
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.2s ease;
+  box-shadow: var(--shadow-s);
+
+  &:hover {
+    background: var(--bg-light);
+    box-shadow: var(--shadow-m);
+  }
+
+  &:active {
+    transform: translateY(1px);
+    box-shadow: var(--shadow-s);
+  }
+}
+
+.tm-nav-btn {
+  font-size: 24px;
+  padding: 4px 12px;
+  line-height: 1;
+}
+
+.tm-date-text {
+  font-size: 16px;
+  color: var(--text);
+  min-width: 200px;
+  text-align: center;
+}
+
+// Stats
+.tm-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+}
+
+.tm-stat-card {
+  background: var(--bg);
+  border: 1px solid var(--border-subtle);
+  border-radius: 10px;
+  padding: 20px;
+  text-align: center;
+  transition: all 0.3s ease;
+  box-shadow: var(--shadow-s);
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-m);
+    border-color: var(--border-medium);
+  }
+}
+
+.tm-stat-value {
+  font-size: 36px;
+  font-weight: bold;
+  background: linear-gradient(135deg, var(--accent-hover) 0%, var(--accent) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 8px;
+}
+
+.tm-stat-label {
+  font-size: 13px;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+// Timeline
+.tm-timeline {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-medium);
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 24px;
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1),
+    0 1px 2px rgba(0, 0, 0, 0.2);
+  position: relative;
+
+  // Subtle glow effect
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.2) 50%,
+      transparent 100%);
+    pointer-events: none;
+  }
+}
+
+.tm-time-header {
+  display: flex;
+  border-bottom: 2px solid var(--border-medium);
+  background: linear-gradient(180deg, oklch(0.2 0.015 270) 0%, var(--bg-dark) 100%);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.tm-day-label {
+  width: 80px;
+  flex-shrink: 0;
+  padding: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-align: center;
+  border-right: 2px solid var(--border-medium);
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.tm-hours {
+  display: flex;
+  flex: 1;
+  position: relative;
+}
+
+.tm-hour-mark {
+  flex: 1;
+  padding: 8px 4px;
+  font-size: 11px;
+  color: var(--text-dim);
+  text-align: center;
+  border-left: 1px solid var(--border-subtle);
+
+  &:first-child {
+    border-left: none;
+  }
+}
+
+// Days and sessions
+.tm-days {
+  position: relative;
+}
+
+.tm-day-row {
+  display: flex;
+  border-bottom: 2px solid var(--border-medium);
+  min-height: 70px;
+  background: var(--bg);
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  &:hover {
+    background: var(--bg-light);
+  }
+
+  .tm-day-label {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 4px;
+    background: linear-gradient(135deg, rgba(0, 0, 0, 0.3) 0%, rgba(0, 0, 0, 0.2) 100%);
+  }
+
+  .tm-day-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .tm-day-date {
+    font-size: 12px;
+    color: var(--text-secondary);
+    font-weight: 500;
+  }
+}
+
+.tm-sessions-track {
+  flex: 1;
+  position: relative;
+  padding: 8px 0;
+
+  // Hour grid lines
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    --hour-count: 24;
+    background: repeating-linear-gradient(
+      to right,
+      transparent,
+      transparent calc(100% / var(--hour-count, 24) - 1px),
+      rgba(255, 255, 255, 0.06) calc(100% / var(--hour-count, 24) - 1px),
+      rgba(255, 255, 255, 0.06) calc(100% / var(--hour-count, 24))
+    );
+    pointer-events: none;
+  }
+
+  // Midnight marker (12 AM) - solid vertical line
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: rgb(115 117 125);
+    pointer-events: none;
+    z-index: 1;
+    // Use CSS variable for dynamic positioning based on timeline start
+    left: var(--midnight-position, 0);
+  }
+
+
+  // Split track for days with midnight-spanning sessions
+  &.tm-sessions-track-split {
+    min-height: 132px; // Two rows: 54px (session) + 8px (padding) = 62px per row, plus 8px top/bottom padding
+    padding: 8px 0;
+
+    // Add visual divider between top and bottom sections using background image
+    background-image:
+      linear-gradient(
+        to right,
+        transparent,
+        var(--border-medium) 5%,
+        var(--border-medium) 95%,
+        transparent
+      );
+    background-size: 100% 2px;
+    background-position: center;
+    background-repeat: no-repeat;
+  }
+}
+
+// Current time indicator - real DOM element
+.tm-current-time-indicator {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: linear-gradient(to bottom,
+    transparent 0%,
+    oklch(0.549 0.17 25) 5%,
+    oklch(0.549 0.18 25) 50%,
+    oklch(0.549 0.17 25) 95%,
+    transparent 100%
+  );
+  box-shadow: 0 0 6px rgba(255, 120, 80, 0.3);
+  pointer-events: none;
+  z-index: 3;
+  animation: currentTimePulse 3s ease-in-out infinite;
+  transition: all 0.2s ease;
+}
+
+@keyframes currentTimePulse {
+  0%, 100% {
+    opacity: 0.8;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+// Session block
+.tm-session {
+  position: absolute;
+  // top and bottom are set inline based on session type
+  height: 52px; // Fixed height for consistency
+  // Use CSS variable for game-specific color
+  background: linear-gradient(135deg,
+    var(--game-color, var(--accent)) 0%,
+    color-mix(in srgb, var(--game-color, var(--accent)) 85%, black) 100%);
+  border: 1px solid color-mix(in srgb, var(--game-color, var(--accent)) 80%, white);
+  border-radius: 8px;
+  padding: 8px 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  overflow: visible;
+  display: flex;
+  align-items: center;
+  z-index: 2;
+  box-shadow:
+    var(--shadow-m),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+
+  &:hover,
+  &.tm-session-hovered {
+    transform: translateY(-1px);
+    box-shadow:
+      var(--shadow-l),
+      0 3px 10px color-mix(in srgb, var(--game-color, var(--accent)) 60%, transparent),
+      inset 0 1px 0 rgba(255, 255, 255, 0.3);
+    border-color: color-mix(in srgb, var(--game-color, var(--accent)) 90%, white);
+    z-index: 5;
+  }
+
+  &:active {
+    transform: translateY(0);
+    box-shadow: var(--shadow-m), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  }
+
+  &.tm-session-selected {
+    box-shadow:
+      var(--shadow-l),
+      0 0 0 3px color-mix(in srgb, var(--game-color, var(--accent)) 50%, transparent),
+      0 0 20px var(--game-color),
+      inset 0 1px 0 rgba(255, 255, 255, 0.3);
+    border-color: rgba(255, 255, 255, 0.8);
+    z-index: 6;
+  }
+
+  // Session that continues to next day (ends at midnight)
+  &.tm-session-continues {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+
+    // Arrow pointing to next day's continuation
+    &::after {
+      content: '';
+      position: absolute;
+      right: -16px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 0;
+      height: 0;
+      border-left: 10px solid var(--game-color, var(--accent));
+      border-top: 8px solid transparent;
+      border-bottom: 8px solid transparent;
+      z-index: 10;
+      filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.4));
+    }
+  }
+
+  // Session that continued from previous day (starts at midnight)
+  &.tm-session-continued {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+  }
+}
+
+.tm-session-content {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  overflow: hidden;
+}
+
+.tm-session-icon {
+  font-size: 24px;
+  flex-shrink: 0;
+}
+
+.tm-session-info {
+  overflow: hidden;
+  flex: 1;
+  min-width: 0;
+}
+
+.tm-session-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: #fff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-bottom: 2px;
+}
+
+.tm-session-time {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.8);
+  white-space: nowrap;
+}
+
+// Details panel
+.tm-details-panel {
+  background: linear-gradient(135deg, var(--bg) 0%, var(--bg-light) 100%);
+  border: 1px solid var(--border-medium);
+  border-radius: 12px;
+  overflow: hidden;
+  animation: slideUp 0.3s ease;
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.tm-details-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  background: var(--bg-dark);
+}
+
+.tm-details-game {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.tm-details-icon {
+  font-size: 48px;
+  background: var(--bg-light);
+  border-radius: 12px;
+  padding: 12px;
+  border: none;
+  box-shadow: var(--shadow-s);
+}
+
+.tm-details-title {
+  font-size: 24px;
+  font-weight: 400;
+  margin: 0 0 8px 0;
+  color: var(--text);
+}
+
+.tm-details-subtitle {
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.tm-close-btn {
+  background: var(--bg-light);
+  border: none;
+  color: var(--text-secondary);
+  width: 36px;
+  height: 36px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  box-shadow: var(--shadow-s);
+
+  &:hover {
+    background: oklch(0.5 0.15 25);
+    color: #fff;
+    box-shadow: var(--shadow-m);
+  }
+
+  &:active {
+    transform: scale(0.95);
+    box-shadow: var(--shadow-s);
+  }
+}
+
+.tm-details-body {
+  padding: 24px;
+}
+
+.tm-details-section-title {
+  font-size: 18px;
+  font-weight: 400;
+  color: var(--text);
+  margin: 0 0 16px 0;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+// Achievements
+.tm-achievements {
+  display: grid;
+  gap: 12px;
+}
+
+.tm-achievement {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: var(--bg-dark);
+  border: none;
+  border-radius: 8px;
+  padding: 16px;
+  transition: all 0.2s ease;
+  box-shadow: var(--shadow-s);
+
+  &:hover {
+    background: var(--bg-light);
+    transform: translateX(4px);
+    box-shadow: var(--shadow-m);
+  }
+}
+
+.tm-achievement-icon {
+  font-size: 32px;
+  background: var(--bg-light);
+  border-radius: 50%;
+  padding: 12px;
+  border: 2px solid var(--accent);
+  flex-shrink: 0;
+  box-shadow: var(--shadow-s);
+}
+
+.tm-achievement-info {
+  flex: 1;
+}
+
+.tm-achievement-name {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+
+.tm-achievement-desc {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.tm-no-achievements {
+  text-align: center;
+  padding: 40px;
+  color: var(--text-secondary);
+
+  p {
+    margin: 0;
+    font-size: 14px;
+  }
+}
+
+// Responsive
+@media (max-width: 768px) {
+  .time-manager {
+    padding: 16px;
+  }
+
+  .tm-title {
+    font-size: 24px;
+  }
+
+  .tm-header-top {
+    flex-direction: column;
+    gap: 16px;
+    align-items: flex-start;
+  }
+
+  .tm-stats {
+    grid-template-columns: 1fr;
+  }
+
+  .tm-day-label {
+    width: 60px;
+  }
+
+  .tm-hour-mark {
+    font-size: 9px;
+  }
+
+  .tm-session-info {
+    display: none;
+  }
+}

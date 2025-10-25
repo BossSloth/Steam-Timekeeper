@@ -1,0 +1,1 @@
+Switch to using bun for serving instead of vite. Check out `bun init --react`. Must wait for this bug to be fixed: https://github.com/oven-sh/bun/issues/19736 (soon?)

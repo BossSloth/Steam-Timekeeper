@@ -1,0 +1,49 @@
+{
+  "workspaces": [
+    "components/*"
+  ],
+  "scripts": {
+    "dev-build": "millennium-ttc --build dev --no-update",
+    "sass": "sass ./public/steam-timekeeper.scss:./public/steam-timekeeper.css --style compressed --embed-sources --embed-source-map",
+    "dev": "nodemon --watch webkit --watch frontend --watch components --watch public/steam-timekeeper.scss --ext ts,tsx,js,jsx,scss --exec \"npm run sass && npm run dev-build\"",
+    "build": "npm run sass && millennium-ttc --build prod"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.38.0",
+    "@semantic-release/changelog": "^6.0.3",
+    "@semantic-release/exec": "^7.1.0",
+    "@semantic-release/git": "^10.0.1",
+    "@semantic-release/github": "^11.0.6",
+    "@stylistic/eslint-plugin": "^5.5.0",
+    "@types/node": "^24.9.1",
+    "@types/react": "^18.3.26",
+    "@types/react-dom": "^18.3.7",
+    "eslint": "^9.38.0",
+    "eslint-plugin-perfectionist": "^4.15.1",
+    "eslint-plugin-react": "^7.37.5",
+    "globals": "^16.4.0",
+    "nodemon": "^3.1.10",
+    "semantic-release": "^24.2.9",
+    "steam-types": "^0.1.4",
+    "typescript-eslint": "^8.46.2"
+  },
+  "type": "module",
+  "name": "steam-timekeeper",
+  "version": "1.0.0",
+  "description": "A plugin for Millennium that tracks your time spent on Steam",
+  "main": "./frontend/index.jsx",
+  "author": "BossSloth",
+  "license": "MIT",
+  "dependencies": {
+    "@steambrew/api": "^5.8.0",
+    "@steambrew/client": "^5.8.0",
+    "@steambrew/ttc": "^2.8.6",
+    "@steambrew/webkit": "^5.8.0",
+    "react-icons": "^5.5.0",
+    "sass-embedded": "^1.93.2",
+    "zustand": "^5.0.8"
+  },
+  "patchedDependencies": {
+    "@steambrew/client@5.8.0": "patches/@steambrew%2Fclient@5.8.0.patch"
+  }
+}

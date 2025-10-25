@@ -1,0 +1,24 @@
+{
+    "compilerOptions": {
+      "outDir": ".millennium/Dist",
+      "module": "ESNext",
+      "target": "ES2022",
+      "jsx": "react",
+      "declaration": false,
+      "moduleResolution": "bundler",
+      "noUnusedLocals": true,
+      "noUnusedParameters": true,
+      "esModuleInterop": true,
+      "noImplicitReturns": true,
+      "noImplicitThis": true,
+      "noImplicitAny": true,
+      "allowSyntheticDefaultImports": true,
+      "skipLibCheck": true,
+      "resolveJsonModule": true,
+      "strictNullChecks": true,
+      "noUncheckedIndexedAccess": true,
+      "strict": true,
+      "types": ["steam-types", "node"]
+    },
+    "exclude": ["node_modules"]
+}

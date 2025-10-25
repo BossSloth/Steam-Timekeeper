@@ -1,0 +1,28 @@
+{
+  "name": "components",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@types/node": "^24.6.2",
+    "@types/react": "^18.3.25",
+    "@types/react-dom": "^18.3.7",
+    "@vitejs/plugin-react": "^5.0.4",
+    "globals": "^16.4.0",
+    "sass": "^1.93.2",
+    "typescript": "~5.9.3",
+    "vite": "npm:rolldown-vite@7.1.14"
+  },
+  "overrides": {
+    "vite": "npm:rolldown-vite@7.1.14"
+  }
+}
