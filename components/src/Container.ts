@@ -1,9 +1,10 @@
+import { IAppDataStore } from './AppDataStore/IAppDataStore';
 import { SessionDatabase } from './TimeManager/SessionDatabase';
 
 export class Container {
-  public readonly sessionDatabase: SessionDatabase;
+  public readonly sessionDB: SessionDatabase;
 
-  constructor(mocked = false) {
-    this.sessionDatabase = new SessionDatabase(mocked);
+  constructor(public readonly appDataStore: IAppDataStore, mocked = false) {
+    this.sessionDB = new SessionDatabase(mocked);
   }
 }

@@ -1,12 +1,19 @@
+import { Container } from '@components/Container';
 import { Millennium } from '@steambrew/client';
 import * as ReactDOM from 'react-dom';
 import * as ReactDOMClient from 'react-dom/client';
-import { BasicPopup } from 'steam-types/Global/PopupManager';
+import { BasicPopup } from 'steam-types/Global/managers/PopupManager';
 
 export let mainWindow: Window;
 
 export function initMainWindow(_mainWindow: Window): void {
   mainWindow = _mainWindow;
+}
+
+export let container: Container;
+
+export function initContainer(_container: Container): void {
+  container = _container;
 }
 
 declare global {

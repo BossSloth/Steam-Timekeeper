@@ -1,5 +1,6 @@
 import { TimelineEntryType } from 'steam-types';
-import { AppData, Day, GameSession } from './Types';
+import { AppData } from '../AppDataStore/IAppDataStore';
+import { Day, GameSession } from './Types';
 
 export const MOCK_SESSIONS: GameSession[] = [
   {
@@ -84,51 +85,51 @@ export const MOCK_SESSIONS: GameSession[] = [
 export const MOCK_APP_DATA: Record<string, AppData> = {
   1091500: {
     name: 'Cyberpunk 2077',
-    icon: '🎮',
-    achievements: [
-      { strID: 'ACH_NIGHT_CITY_DREAMER', strName: 'Night City Dreamer', strDescription: 'Complete the prologue', bAchieved: true, flAchieved: 0, rtUnlocked: 0, bHidden: false, flCurrentProgress: 0, flMaxProgress: 0, flMinProgress: 0, strImage: '' },
-      { strID: 'ACH_STREET_CRED_10', strName: 'Street Cred', strDescription: 'Reach Street Cred level 10', bAchieved: true, flAchieved: 0, rtUnlocked: 0, bHidden: false, flCurrentProgress: 0, flMaxProgress: 0, flMinProgress: 0, strImage: '' },
-    ],
+    icon: 'https://cdn.fastly.steamstatic.com/steamcommunity/public/images/apps/1091500/42b9b33fa0f0d997beb299c6157592a8fe7d8f68.jpg',
+    // achievements: [
+    //   { strID: 'ACH_NIGHT_CITY_DREAMER', strName: 'Night City Dreamer', strDescription: 'Complete the prologue', bAchieved: true, flAchieved: 0, rtUnlocked: 0, bHidden: false, flCurrentProgress: 0, flMaxProgress: 0, flMinProgress: 0, strImage: '' },
+    //   { strID: 'ACH_STREET_CRED_10', strName: 'Street Cred', strDescription: 'Reach Street Cred level 10', bAchieved: true, flAchieved: 0, rtUnlocked: 0, bHidden: false, flCurrentProgress: 0, flMaxProgress: 0, flMinProgress: 0, strImage: '' },
+    // ],
     appId: '1091500',
   },
   1245620: {
     name: 'Elden Ring',
-    icon: '⚔️',
-    achievements: [{ strID: 'ACH_MARGIT_DEFEATED', strName: 'Margit the Fell Omen', strDescription: 'Defeated Margit the Fell Omen', bAchieved: true, flAchieved: 0, rtUnlocked: 0, bHidden: false, flCurrentProgress: 0, flMaxProgress: 0, flMinProgress: 0, strImage: '' }],
+    icon: 'https://cdn.akamai.steamstatic.com/steamcommunity/public/images/apps/1245620/b6e290dd5a92ce98f89089a207733c70c41a1871.jpg',
+    // achievements: [{ strID: 'ACH_MARGIT_DEFEATED', strName: 'Margit the Fell Omen', strDescription: 'Defeated Margit the Fell Omen', bAchieved: true, flAchieved: 0, rtUnlocked: 0, bHidden: false, flCurrentProgress: 0, flMaxProgress: 0, flMinProgress: 0, strImage: '' }],
     appId: '1245620',
   },
   730: {
     name: 'Counter-Strike 2',
-    icon: '🔫',
-    achievements: [],
+    icon: 'https://cdn.fastly.steamstatic.com/steamcommunity/public/images/apps/730/8dbc71957312bbd3baea65848b545be9eae2a355.jpg',
+    // achievements: [],
     appId: '730',
   },
   1086940: {
     name: 'Baldur\'s Gate 3',
-    icon: '🐉',
-    achievements: [
-      { strID: 'ACH_MIND_FLAYER', strName: 'Mind Flayer', strDescription: 'Discover the truth about the tadpole', bAchieved: true, flAchieved: 0, rtUnlocked: 0, bHidden: false, flCurrentProgress: 0, flMaxProgress: 0, flMinProgress: 0, strImage: '' },
-      { strID: 'ACH_PARTY_TIME', strName: 'Party Time', strDescription: 'Recruit 4 companions', bAchieved: true, flAchieved: 0, rtUnlocked: 0, bHidden: false, flCurrentProgress: 0, flMaxProgress: 0, flMinProgress: 0, strImage: '' },
-      { strID: 'ACH_CRITICAL_HIT_10', strName: 'Critical Hit', strDescription: 'Land 10 critical hits', bAchieved: true, flAchieved: 0, rtUnlocked: 0, bHidden: false, flCurrentProgress: 0, flMaxProgress: 0, flMinProgress: 0, strImage: '' },
-    ],
+    icon: 'https://cdn.akamai.steamstatic.com/steamcommunity/public/images/apps/1086940/d866cae7ea1e471fdbc206287111f1b642373bd9.jpg',
+    // achievements: [
+    //   { strID: 'ACH_MIND_FLAYER', strName: 'Mind Flayer', strDescription: 'Discover the truth about the tadpole', bAchieved: true, flAchieved: 0, rtUnlocked: 0, bHidden: false, flCurrentProgress: 0, flMaxProgress: 0, flMinProgress: 0, strImage: '' },
+    //   { strID: 'ACH_PARTY_TIME', strName: 'Party Time', strDescription: 'Recruit 4 companions', bAchieved: true, flAchieved: 0, rtUnlocked: 0, bHidden: false, flCurrentProgress: 0, flMaxProgress: 0, flMinProgress: 0, strImage: '' },
+    //   { strID: 'ACH_CRITICAL_HIT_10', strName: 'Critical Hit', strDescription: 'Land 10 critical hits', bAchieved: true, flAchieved: 0, rtUnlocked: 0, bHidden: false, flCurrentProgress: 0, flMaxProgress: 0, flMinProgress: 0, strImage: '' },
+    // ],
     appId: '1086940',
   },
   252950: {
     name: 'Rocket League',
-    icon: '🚗',
-    achievements: [{ strID: 'ACH_AERIAL_GOAL', strName: 'Aerial Expert', strDescription: 'Score an aerial goal', bAchieved: true, flAchieved: 0, rtUnlocked: 0, bHidden: false, flCurrentProgress: 0, flMaxProgress: 0, flMinProgress: 0, strImage: '' }],
+    icon: 'https://cdn.fastly.steamstatic.com/steamcommunity/public/images/apps/252950/9ad6dd3d173523354385955b5fb2af87639c4163.jpg',
+    // achievements: [{ strID: 'ACH_AERIAL_GOAL', strName: 'Aerial Expert', strDescription: 'Score an aerial goal', bAchieved: true, flAchieved: 0, rtUnlocked: 0, bHidden: false, flCurrentProgress: 0, flMaxProgress: 0, flMinProgress: 0, strImage: '' }],
     appId: '252950',
   },
   29674015216: {
     name: 'Minecraft',
-    icon: '⛏️',
-    achievements: [],
+    icon: 'https://cdn.akamai.steamstatic.com/steamcommunity/public/images/apps/29674015216/622c36524c232532c21c2c2c2c2c2c2c2c2c2c2c.jpg',
+    // achievements: [],
     appId: '29674015216',
   },
   2807960: {
     name: 'Battlefield 6',
-    icon: '💣',
-    achievements: [],
+    icon: 'https://cdn.akamai.steamstatic.com/steamcommunity/public/images/apps/2807960/83f46c4ec33b6e72c403fcd96a61e8b47ca77254.jpg',
+    // achievements: [],
     appId: '2807960',
   },
 };

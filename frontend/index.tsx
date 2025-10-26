@@ -1,12 +1,14 @@
-import { sessionDB } from '@components/TimeManager/SessionDatabase';
+import { Container } from '@components/Container';
+import { AppDataStore } from 'AppDataStore';
 import { OnPopupCreation } from 'onPopupCreation';
 import { startCheckRunningApps } from 'runningApps';
+import { initContainer } from 'shared';
 import { CGameRecording_TimelineEntryChanged_Notification } from 'steam-types';
 import { gameRecordingRequestHandler } from 'steam-types/Runtime';
 import { ProtobufNotification } from 'steam-types/types/shared/protobuf';
 import './components/TimePopup';
 
-export default async function PluginMain(): Promise<void> {
+export default function PluginMain(): void {
   console.log('Time keeper plugin main');
 
   const wnd = g_PopupManager.GetExistingPopup('SP Desktop_uid0');
@@ -15,7 +17,10 @@ export default async function PluginMain(): Promise<void> {
   }
   g_PopupManager.AddPopupCreatedCallback(OnPopupCreation);
 
-  await sessionDB.initialize();
+  initContainer(new Container(
+    new AppDataStore(),
+    false,
+  ));
 
   startCheckRunningApps();
   gameRecordingRequestHandler.RegisterForNotifyTimelineEntryChanged((notification: ProtobufNotification<CGameRecording_TimelineEntryChanged_Notification>) => {

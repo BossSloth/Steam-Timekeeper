@@ -4,7 +4,7 @@ import { MOCK_SESSIONS } from './MockSessions';
 import { GameSession } from './Types';
 
 const DB_NAME = 'SteamTimekeeperDB';
-const DB_VERSION = 1;
+const DB_VERSION = 3;
 const SESSIONS_STORE = 'sessions';
 const METADATA_STORE = 'metadata';
 

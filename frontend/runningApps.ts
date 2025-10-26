@@ -1,5 +1,5 @@
 import { GameSession } from '@components/TimeManager';
-import { sessionDB } from '@components/TimeManager/SessionDatabase';
+import { container } from 'shared';
 import { SteamAppOverview } from 'steam-types/Global/stores/SteamUIStore/index';
 
 const CHECK_INTERVAL = 5000;
@@ -33,11 +33,12 @@ async function onAppLaunched(appOverview: SteamAppOverview): Promise<void> {
   console.debug(`%cApp ${appOverview.appid.toString()} is now running`, 'color: green; font-size: 46px');
   runningApps.add(appOverview.appid.toString());
 
+  const { sessionDB } = container;
+
   const session: GameSession = {
     achievementEntries: [],
     appId: appOverview.appid.toString(),
     endTime: new Date(),
-    id: appOverview.appid.toString(),
     markerEntries: [],
     startTime: new Date(),
   };
@@ -51,6 +52,8 @@ async function onAppHeartbeat(appOverview: SteamAppOverview): Promise<void> {
     return;
   }
 
+  const { sessionDB } = container;
+
   session.endTime = new Date();
   await sessionDB.updateSession(session);
 }
@@ -61,6 +64,8 @@ async function onAppQuit(appId: string): Promise<void> {
   if (!session) {
     return;
   }
+
+  const { sessionDB } = container;
 
   session.endTime = new Date();
   await sessionDB.updateSession(session);

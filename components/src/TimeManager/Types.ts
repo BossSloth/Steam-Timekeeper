@@ -1,5 +1,4 @@
 import { TimelineEntryType } from 'steam-types';
-import { PlayerAchievement } from 'steam-types/Global/stores/AppDetailsStore';
 
 export interface Achievement {
   description: string;
@@ -36,14 +35,6 @@ export interface GameSession {
   id?: number;
   markerEntries: MarkerTimelineEntry[];
   startTime: Date;
-}
-
-export interface AppData {
-  /** SteamClient.Apps.GetMyAchievementsForApp() */
-  achievements: PlayerAchievement[];
-  appId: string;
-  icon: string;
-  name: string;
 }
 
 /**

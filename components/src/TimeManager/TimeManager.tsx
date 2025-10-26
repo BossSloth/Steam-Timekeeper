@@ -1,7 +1,8 @@
 import React, { useEffect, useMemo, useState } from 'react';
+import { PlayerAchievement } from 'steam-types/Global/stores/AppDetailsStore';
+import { AppData } from '../AppDataStore/IAppDataStore';
 import { Container } from '../Container';
-import { MOCK_APP_DATA } from './MockSessions';
-import { AppData, Day, getDuration, type GameSession } from './Types';
+import { Day, getDuration, type GameSession } from './Types';
 
 const DAYS = Object.values(Day);
 
@@ -38,7 +39,7 @@ export function TimeManager({ container }: { readonly container: Container; }): 
   const [isLoading, setIsLoading] = useState(true);
   const [timelineStartHour, setTimelineStartHour] = useState(0);
 
-  const { sessionDatabase: sessionDB } = container;
+  const { sessionDB, appDataStore } = container;
 
   // Calculate week end (Sunday)
   const weekEnd = useMemo(() => {
@@ -237,8 +238,8 @@ export function TimeManager({ container }: { readonly container: Container; }): 
     return sessions.reduce((acc, session) => acc + session.achievementEntries.length, 0);
   }
 
-  function getAppData(appId: string): AppData | undefined {
-    return MOCK_APP_DATA[appId];
+  function getAppData(appId: string): AppData | null {
+    return appDataStore.getAppData(appId);
   }
 
   if (isLoading) {
@@ -411,7 +412,9 @@ export function TimeManager({ container }: { readonly container: Container; }): 
                         }}
                       >
                         <div className="tm-session-content">
-                          <span className="tm-session-icon">{appData?.icon}</span>
+                          <span className="tm-session-icon">
+                            <img src={appData?.icon} alt={appData?.name} />
+                          </span>
                           <div className="tm-session-info">
                             <div className="tm-session-name">{appData?.name}</div>
                             <div className="tm-session-time">{formatDuration(getDuration(session))}</div>
@@ -432,7 +435,9 @@ export function TimeManager({ container }: { readonly container: Container; }): 
         <div className="tm-details-panel">
           <div className="tm-details-header">
             <div className="tm-details-game">
-              <span className="tm-details-icon">{getAppData(selectedSession.appId)?.icon}</span>
+              <span className="tm-details-icon">
+                <img src={getAppData(selectedSession.appId)?.icon} alt={getAppData(selectedSession.appId)?.name} />
+              </span>
               <div>
                 <h2 className="tm-details-title">{getAppData(selectedSession.appId)?.name}</h2>
                 <p className="tm-details-subtitle">
@@ -460,16 +465,17 @@ export function TimeManager({ container }: { readonly container: Container; }): 
                     </h3>
                     <div className="tm-achievements">
                       {selectedSession.achievementEntries.map((entry) => {
-                        const appData = getAppData(selectedSession.appId);
-                        const achievement = appData?.achievements.find(ach => ach.strID === entry.achievementId);
+                        // const appData = getAppData(selectedSession.appId);
+                        // const achievement = appData?.achievements.find(ach => ach.strID === entry.achievementId);
+                        const achievement = {} as PlayerAchievement;
 
                         return (
                           <div key={entry.id} className="tm-achievement">
                             <span className="tm-achievement-icon">🏆</span>
                             <div className="tm-achievement-info">
-                              <div className="tm-achievement-name">{achievement?.strName ?? entry.achievementId}</div>
+                              <div className="tm-achievement-name">{achievement.strName}</div>
                               <div className="tm-achievement-desc">
-                                {achievement?.strDescription}
+                                {achievement.strDescription}
                               </div>
                             </div>
                           </div>
