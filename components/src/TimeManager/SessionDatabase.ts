@@ -71,15 +71,17 @@ class SessionDatabase {
     });
   }
 
-  async addSession(session: GameSession): Promise<void> {
+  async addSession(session: GameSession): Promise<string> {
     if (!this.db) {
       throw new Error('Database not initialized');
     }
-    await this.db.add(SESSIONS_STORE, session);
+    const id = await this.db.add(SESSIONS_STORE, session);
 
     // Recalculate optimal start hour after adding session
     await this.recalculateOptimalStartHour();
     this.notifyListeners();
+
+    return id;
   }
 
   async addSessions(sessions: GameSession[]): Promise<void> {
