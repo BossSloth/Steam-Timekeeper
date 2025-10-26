@@ -1,9 +1,10 @@
 /* eslint-disable no-await-in-loop */
 import { DBSchema, IDBPDatabase, openDB } from 'idb';
+import { MOCK_SESSIONS } from './MockSessions';
 import { GameSession } from './Types';
 
 const DB_NAME = 'SteamTimekeeperDB';
-const DB_VERSION = 2;
+const DB_VERSION = 1;
 const SESSIONS_STORE = 'sessions';
 const METADATA_STORE = 'metadata';
 
@@ -18,7 +19,7 @@ interface SteamTimekeeperDB extends DBSchema {
     value: TimelineMetadata;
   };
   [SESSIONS_STORE]: {
-    key: string;
+    key: number;
     value: GameSession;
     indexes: {
       appId: string;
@@ -30,7 +31,9 @@ interface SteamTimekeeperDB extends DBSchema {
 
 type SessionChangeListener = () => void;
 
-class SessionDatabase {
+export class SessionDatabase {
+  constructor(private readonly mocked: boolean) {}
+
   private db: IDBPDatabase<SteamTimekeeperDB> | null = null;
 
   private readonly listeners = new Set<SessionChangeListener>();
@@ -55,7 +58,7 @@ class SessionDatabase {
       upgrade(db) {
         // Create sessions store if it doesn't exist
         if (!db.objectStoreNames.contains(SESSIONS_STORE)) {
-          const sessionsStore = db.createObjectStore(SESSIONS_STORE, { keyPath: 'id' });
+          const sessionsStore = db.createObjectStore(SESSIONS_STORE, { autoIncrement: true, keyPath: 'id' });
 
           // Create indexes for efficient querying
           sessionsStore.createIndex('appId', 'appId', { unique: false });
@@ -69,9 +72,23 @@ class SessionDatabase {
         }
       },
     });
+
+    await this.fillMocked();
   }
 
-  async addSession(session: GameSession): Promise<string> {
+  async fillMocked(): Promise<void> {
+    if (!this.mocked || this.db === null) {
+      return;
+    }
+
+    // Clear existing sessions
+    await this.db.clear(SESSIONS_STORE);
+
+    // Add mocked sessions
+    this.addSessions(MOCK_SESSIONS);
+  }
+
+  async addSession(session: GameSession): Promise<number> {
     if (!this.db) {
       throw new Error('Database not initialized');
     }
@@ -100,7 +117,7 @@ class SessionDatabase {
     this.notifyListeners();
   }
 
-  async getSession(id: string): Promise<GameSession | undefined> {
+  async getSession(id: number): Promise<GameSession | undefined> {
     if (!this.db) {
       throw new Error('Database not initialized');
     }
@@ -134,7 +151,7 @@ class SessionDatabase {
 
       // Include session if it overlaps with the date range
       if (sessionStart >= startDate && sessionEnd <= endDate) {
-        sessions.push(session);
+        sessions.push({ ...session, id: cursor.primaryKey });
       }
 
       cursor = await cursor.continue();
@@ -153,7 +170,7 @@ class SessionDatabase {
     this.notifyListeners();
   }
 
-  async deleteSession(id: string): Promise<void> {
+  async deleteSession(id: number): Promise<void> {
     if (!this.db) {
       throw new Error('Database not initialized');
     }
@@ -266,6 +283,3 @@ class SessionDatabase {
     return newMetadata?.optimalStartHour ?? 0;
   }
 }
-
-// Export a singleton instance
-export const sessionDB = new SessionDatabase();

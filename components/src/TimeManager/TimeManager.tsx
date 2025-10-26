@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { MOCK_APP_DATA, MOCK_SESSIONS } from './MockSessions';
-import { sessionDB } from './SessionDatabase';
+import { Container } from '../Container';
+import { MOCK_APP_DATA } from './MockSessions';
 import { AppData, Day, getDuration, type GameSession } from './Types';
 
 const DAYS = Object.values(Day);
@@ -30,13 +30,15 @@ function getGameColor(gameName: string): string {
   return `hsl(${hue}, 75%, 55%)`;
 }
 
-export function TimeManager(): React.ReactNode {
+export function TimeManager({ container }: { readonly container: Container; }): React.ReactNode {
   const [selectedSession, setSelectedSession] = useState<GameSession | null>(null);
-  const [hoveredSessionId, setHoveredSessionId] = useState<string | null>(null);
+  const [hoveredSessionId, setHoveredSessionId] = useState<number | null>(null);
   const [weekStart, setWeekStart] = useState(() => getMonday(new Date()));
   const [sessions, setSessions] = useState<GameSession[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [timelineStartHour, setTimelineStartHour] = useState(0);
+
+  const { sessionDatabase: sessionDB } = container;
 
   // Calculate week end (Sunday)
   const weekEnd = useMemo(() => {
@@ -51,28 +53,15 @@ export function TimeManager(): React.ReactNode {
   // Initialize database and load mock data if empty
   useEffect(() => {
     async function initDB(): Promise<void> {
-      try {
-        await sessionDB.initialize();
-        const count = await sessionDB.getSessionCount();
+      await sessionDB.initialize();
 
-        // If database is empty, seed it with mock data
-        if (count === 0) {
-          await sessionDB.addSessions(MOCK_SESSIONS);
-        }
-
-        // Load optimal start hour from database
-        const optimalStartHour = await sessionDB.getOptimalStartHour();
-        setTimelineStartHour(optimalStartHour);
-        setIsLoading(false);
-      } catch (error) {
-        console.error('Failed to initialize database:', error);
-        setIsLoading(false);
-      }
+      // Load optimal start hour from database
+      const optimalStartHour = await sessionDB.getOptimalStartHour();
+      setTimelineStartHour(optimalStartHour);
+      setIsLoading(false);
     }
 
-    initDB().catch((err: unknown) => {
-      console.error('Failed to initialize database:', err);
-    });
+    initDB();
   }, []);
 
   // Load sessions for the current week
@@ -134,18 +123,6 @@ export function TimeManager(): React.ReactNode {
       clearInterval(interval);
     };
   }, []);
-
-  // Filter sessions for current week
-  const weekSessions = useMemo(() => {
-    const start = getDateAtMidnight(weekStart);
-    const end = getDateAtEndOfDay(weekEnd);
-
-    return sessions.filter((session) => {
-      const sessionDate = getDateAtMidnight(session.startTime);
-
-      return sessionDate >= start && sessionDate <= end;
-    });
-  }, [sessions, weekStart, weekEnd]);
 
   const visibleHours = Array.from({ length: 24 }, (_, i) => (timelineStartHour + i) % 24);
 
@@ -224,7 +201,7 @@ export function TimeManager(): React.ReactNode {
     const dayStart = getDateAtMidnight(dayDate);
     const dayEnd = getDateAtEndOfDay(dayDate);
 
-    return weekSessions.filter((session) => {
+    return sessions.filter((session) => {
       const sessionStart = new Date(session.startTime);
       const sessionEnd = new Date(session.endTime);
 
@@ -251,17 +228,21 @@ export function TimeManager(): React.ReactNode {
   }
 
   function getTotalPlaytime(): string {
-    const total = weekSessions.reduce((acc, session) => acc + getDuration(session), 0);
+    const total = sessions.reduce((acc, session) => acc + getDuration(session), 0);
 
     return formatDuration(total);
   }
 
   function getTotalAchievements(): number {
-    return weekSessions.reduce((acc, session) => acc + session.achievementEntries.length, 0);
+    return sessions.reduce((acc, session) => acc + session.achievementEntries.length, 0);
   }
 
   function getAppData(appId: string): AppData | undefined {
     return MOCK_APP_DATA[appId];
+  }
+
+  if (isLoading) {
+    return <div className="time-manager">Loading...</div>;
   }
 
   return (
@@ -313,7 +294,7 @@ export function TimeManager(): React.ReactNode {
             <div className="tm-stat-label">Total Playtime</div>
           </div>
           <div className="tm-stat-card">
-            <div className="tm-stat-value">{weekSessions.length}</div>
+            <div className="tm-stat-value">{sessions.length}</div>
             <div className="tm-stat-label">Gaming Sessions</div>
           </div>
           <div className="tm-stat-card">
@@ -386,6 +367,10 @@ export function TimeManager(): React.ReactNode {
                     />
                   )}
                   {daySessions.map((session) => {
+                    const id = session.id;
+                    if (id === undefined) {
+                      return null;
+                    }
                     const appData = getAppData(session.appId);
                     const position = getSessionPosition(session, dayDate);
                     const { sessionStartDay, sessionEndDay, spansMidnight } = getSessionDayInfo(session);
@@ -393,7 +378,7 @@ export function TimeManager(): React.ReactNode {
                     const isStartDay = spansMidnight && dayTime.getTime() === sessionStartDay.getTime();
                     const isEndDay = spansMidnight && dayTime.getTime() === sessionEndDay.getTime();
                     const gameColor = getGameColor(appData?.name ?? session.appId);
-                    const isHovered = hoveredSessionId === session.id;
+                    const isHovered = hoveredSessionId === id;
 
                     // In split mode: top row for end-day sessions, bottom row for start-day/normal sessions
                     let topPosition: string | undefined;
@@ -408,7 +393,7 @@ export function TimeManager(): React.ReactNode {
                     return (
                       <button
                         type="button"
-                        key={`${session.id}-${dayDate.getTime()}`}
+                        key={`${id}-${dayDate.getTime()}`}
                         className={`tm-session ${selectedSession?.id === session.id ? 'tm-session-selected' : ''} ${isStartDay ? 'tm-session-continues' : ''} ${isEndDay ? 'tm-session-continued' : ''} ${isHovered ? 'tm-session-hovered' : ''}`}
                         style={{
                           ...position,
@@ -419,7 +404,7 @@ export function TimeManager(): React.ReactNode {
                           setSelectedSession(session);
                         }}
                         onMouseEnter={() => {
-                          setHoveredSessionId(session.id);
+                          setHoveredSessionId(id);
                         }}
                         onMouseLeave={() => {
                           setHoveredSessionId(null);

@@ -33,7 +33,7 @@ export interface GameSession {
   achievementEntries: AchievementTimelineEntry[];
   appId: string;
   endTime: Date;
-  id: string;
+  id?: number;
   markerEntries: MarkerTimelineEntry[];
   startTime: Date;
 }
