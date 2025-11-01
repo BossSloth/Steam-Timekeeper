@@ -3,7 +3,7 @@
   background: linear-gradient(135deg, oklch(0.16 0.015 270) 0%, oklch(0.19 0.01 250) 100%);
   color: var(--text);
   font-family: 'Motiva Sans', Arial, Helvetica, sans-serif;
-  padding: 24px;
+  padding: 0 24px;
 
   --bg-dark: oklch(0.18 0.01 270); /* Very subtle purple tint */
   --bg: oklch(0.25 0.015 270); /* Slightly lighter with purple tint */
@@ -39,6 +39,7 @@
 /* Header */
 .tm-header {
   margin-bottom: 32px;
+  padding-top: 24px;
 }
 
 .tm-header-top {

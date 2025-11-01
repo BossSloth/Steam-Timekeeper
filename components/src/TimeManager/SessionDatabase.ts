@@ -34,7 +34,7 @@ type SessionChangeListener = () => void;
 export class SessionDatabase {
   constructor(public readonly mocked: boolean) {}
 
-  private db: IDBPDatabase<SteamTimekeeperDB> | null = null;
+  public db: IDBPDatabase<SteamTimekeeperDB> | null = null;
 
   private readonly listeners = new Set<SessionChangeListener>();
 
@@ -248,7 +248,6 @@ export class SessionDatabase {
       }
     }
 
-    // Start timeline 3 hours after the quietest hour
     const startHour = (quietestHour + 3) % 24;
 
     return startHour;
@@ -284,5 +283,9 @@ export class SessionDatabase {
     const newMetadata = await this.db.get(METADATA_STORE, 'timeline');
 
     return newMetadata?.optimalStartHour ?? 0;
+  }
+
+  isDatabaseInitialized(): boolean {
+    return this.db !== null;
   }
 }

@@ -37,17 +37,10 @@ export interface GameSession {
   startTime: Date;
 }
 
-/**
- * Returns the duration of a game session in minutes.
- * @param {GameSession} session - The game session to calculate the duration for.
- * @returns {number} The duration of the game session in minutes.
- */
-export function getDuration(session: GameSession): number {
-  const diff = session.endTime.getTime() - session.startTime.getTime();
-  const hours = Math.floor(diff / (1000 * 60 * 60));
-  const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-
-  return hours * 60 + minutes;
+export interface Stats {
+  achievementCount: number;
+  sessionCount: number;
+  totalPlaytime: string;
 }
 
 /**
@@ -91,3 +84,5 @@ export enum Day {
   Sat = 'Sat',
   Sun = 'Sun',
 }
+
+export const DAYS = Object.values(Day);
