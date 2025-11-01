@@ -374,6 +374,9 @@ export function TimeManager({ container }: { readonly container: Container; }): 
                     if (id === undefined) {
                       return null;
                     }
+                    if (getDuration(session) < 10) {
+                      return null;
+                    }
                     const appData = getAppData(session.appId);
                     const position = getSessionPosition(session, dayDate);
                     const { sessionStartDay, sessionEndDay, spansMidnight } = getSessionDayInfo(session);
@@ -406,9 +409,14 @@ export function TimeManager({ container }: { readonly container: Container; }): 
                     if (isHovered) {
                       sessionClasses.push('tm-session-hovered');
                     }
+                    const width = Number(position.width.slice(0, -1));
                     // If width is less than 2%, mark it as small
-                    if (Number(position.width.slice(0, -1)) < 2) {
+                    if (width < 2) {
                       sessionClasses.push('tm-session-small');
+                    }
+                    // If width is less than 1%, mark it as tiny
+                    if (width < 1) {
+                      sessionClasses.push('tm-session-tiny');
                     }
 
                     return (

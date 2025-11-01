@@ -48,7 +48,14 @@ export const MOCK_SESSIONS: GameSession[] = [
   {
     appId: '252950', // Rocket League
     startTime: easyDate(Day.Sat, '12:00'),
-    endTime: easyDate(Day.Sat, '12:15'),
+    endTime: easyDate(Day.Sat, '12:13'),
+    achievementEntries: [],
+    markerEntries: [],
+  },
+  {
+    appId: '252950', // Rocket League
+    startTime: easyDate(Day.Sat, '13:00'),
+    endTime: easyDate(Day.Sat, '13:02'),
     achievementEntries: [],
     markerEntries: [],
   },
