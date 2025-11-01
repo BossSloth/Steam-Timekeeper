@@ -120,6 +120,7 @@ export default defineConfig(
       'no-console': 'off',
       'no-alert': 'off',
       camelcase: 'off',
+      'react/react-in-jsx-scope': 'off',
       // #endregion
 
       // #region React

@@ -40,16 +40,23 @@ export const MOCK_SESSIONS: GameSession[] = [
   },
   {
     appId: '252950', // Rocket League
-    startTime: easyDate(Day.Sat, '15:00'),
-    endTime: easyDate(Day.Sat, '17:30'),
-    achievementEntries: [{ id: 'a7', time: easyDate(Day.Sat, '16:15'), type: TimelineEntryType.Achievement, achievementId: 'ACH_AERIAL_GOAL' }],
+    startTime: easyDate(Day.Sat, '11:00'),
+    endTime: easyDate(Day.Sat, '11:30'),
+    achievementEntries: [{ id: 'a7-2', time: easyDate(Day.Sat, '11:15'), type: TimelineEntryType.Achievement, achievementId: 'ACH_AERIAL_GOAL' }],
     markerEntries: [],
   },
   {
     appId: '252950', // Rocket League
-    startTime: easyDate(Day.Sat, '11:00'),
-    endTime: easyDate(Day.Sat, '12:30'),
-    achievementEntries: [{ id: 'a7-2', time: easyDate(Day.Sat, '11:45'), type: TimelineEntryType.Achievement, achievementId: 'ACH_AERIAL_GOAL' }],
+    startTime: easyDate(Day.Sat, '12:00'),
+    endTime: easyDate(Day.Sat, '12:15'),
+    achievementEntries: [],
+    markerEntries: [],
+  },
+  {
+    appId: '252950', // Rocket League
+    startTime: easyDate(Day.Sat, '15:00'),
+    endTime: easyDate(Day.Sat, '17:30'),
+    achievementEntries: [{ id: 'a7', time: easyDate(Day.Sat, '16:15'), type: TimelineEntryType.Achievement, achievementId: 'ACH_AERIAL_GOAL' }],
     markerEntries: [],
   },
   {
@@ -122,7 +129,7 @@ export const MOCK_APP_DATA: Record<string, AppData> = {
   },
   29674015216: {
     name: 'Minecraft',
-    icon: 'https://cdn.akamai.steamstatic.com/steamcommunity/public/images/apps/29674015216/622c36524c232532c21c2c2c2c2c2c2c2c2c2c2c.jpg',
+    icon: 'https://minecraft.wiki/images/Launcher_Icon.png',
     // achievements: [],
     appId: '29674015216',
   },

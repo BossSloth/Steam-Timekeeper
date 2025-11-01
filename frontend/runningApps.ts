@@ -2,7 +2,7 @@ import { GameSession } from '@components/TimeManager';
 import { container } from 'shared';
 import { SteamAppOverview } from 'steam-types/Global/stores/SteamUIStore/index';
 
-const CHECK_INTERVAL = 5000;
+const CHECK_INTERVAL = 10000;
 
 const runningApps = new Set<string>();
 const runningSessions = new Map<string, GameSession>();

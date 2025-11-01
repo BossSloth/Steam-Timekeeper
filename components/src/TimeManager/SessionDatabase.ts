@@ -4,7 +4,7 @@ import { MOCK_SESSIONS } from './MockSessions';
 import { GameSession } from './Types';
 
 const DB_NAME = 'SteamTimekeeperDB';
-const DB_VERSION = 3;
+const DB_VERSION = 1;
 const SESSIONS_STORE = 'sessions';
 const METADATA_STORE = 'metadata';
 
@@ -32,7 +32,7 @@ interface SteamTimekeeperDB extends DBSchema {
 type SessionChangeListener = () => void;
 
 export class SessionDatabase {
-  constructor(private readonly mocked: boolean) {}
+  constructor(public readonly mocked: boolean) {}
 
   private db: IDBPDatabase<SteamTimekeeperDB> | null = null;
 
@@ -58,7 +58,7 @@ export class SessionDatabase {
       upgrade(db) {
         // Create sessions store if it doesn't exist
         if (!db.objectStoreNames.contains(SESSIONS_STORE)) {
-          const sessionsStore = db.createObjectStore(SESSIONS_STORE, { autoIncrement: true, keyPath: 'id' });
+          const sessionsStore = db.createObjectStore(SESSIONS_STORE, { autoIncrement: true });
 
           // Create indexes for efficient querying
           sessionsStore.createIndex('appId', 'appId', { unique: false });
@@ -76,7 +76,7 @@ export class SessionDatabase {
     await this.fillMocked();
   }
 
-  async fillMocked(): Promise<void> {
+  private async fillMocked(): Promise<void> {
     if (!this.mocked || this.db === null) {
       return;
     }
@@ -164,7 +164,10 @@ export class SessionDatabase {
     if (!this.db) {
       throw new Error('Database not initialized');
     }
-    await this.db.put(SESSIONS_STORE, session);
+    if (session.id === undefined) {
+      throw new Error('Session ID is undefined, cannot update session without an ID');
+    }
+    await this.db.put(SESSIONS_STORE, session, session.id);
 
     await this.recalculateOptimalStartHour();
     this.notifyListeners();

@@ -54,7 +54,9 @@ export function TimeManager({ container }: { readonly container: Container; }): 
   // Initialize database and load mock data if empty
   useEffect(() => {
     async function initDB(): Promise<void> {
-      await sessionDB.initialize();
+      if (sessionDB.mocked) {
+        await sessionDB.initialize();
+      }
 
       // Load optimal start hour from database
       const optimalStartHour = await sessionDB.getOptimalStartHour();
@@ -391,11 +393,29 @@ export function TimeManager({ container }: { readonly container: Container; }): 
                       }
                     }
 
+                    const sessionClasses = ['tm-session'];
+                    if (selectedSession?.id === session.id) {
+                      sessionClasses.push('tm-session-selected');
+                    }
+                    if (isStartDay) {
+                      sessionClasses.push('tm-session-continues');
+                    }
+                    if (isEndDay) {
+                      sessionClasses.push('tm-session-continued');
+                    }
+                    if (isHovered) {
+                      sessionClasses.push('tm-session-hovered');
+                    }
+                    // If width is less than 2%, mark it as small
+                    if (Number(position.width.slice(0, -1)) < 2) {
+                      sessionClasses.push('tm-session-small');
+                    }
+
                     return (
                       <button
                         type="button"
                         key={`${id}-${dayDate.getTime()}`}
-                        className={`tm-session ${selectedSession?.id === session.id ? 'tm-session-selected' : ''} ${isStartDay ? 'tm-session-continues' : ''} ${isEndDay ? 'tm-session-continued' : ''} ${isHovered ? 'tm-session-hovered' : ''}`}
+                        className={sessionClasses.join(' ')}
                         style={{
                           ...position,
                           '--game-color': gameColor,
