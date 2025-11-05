@@ -1,6 +1,14 @@
+import os.path as path
+
 import Millennium
 from logger.logger import logger  # pylint: disable=import-error
 
+
+def GetPluginDir():
+    return path.abspath(PLUGIN_BASE_DIR) # pylint: disable=undefined-variable
+
+def GetComponentsPublicDir():
+    return path.join(GetPluginDir(), 'components', 'public')
 
 class Plugin:
     def _front_end_loaded(self):

@@ -16,6 +16,12 @@ export function initContainer(_container: Container): void {
   container = _container;
 }
 
+export let componentsPublicDir: string;
+
+export function initComponentsPublicDir(_componentsPublicDir: string): void {
+  componentsPublicDir = _componentsPublicDir;
+}
+
 declare global {
   const SP_REACTDOM: typeof ReactDOM & typeof ReactDOMClient;
 }

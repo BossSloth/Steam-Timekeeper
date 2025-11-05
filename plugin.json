@@ -5,6 +5,7 @@
   "description": "A plugin for Millennium that tracks your time spent on Steam",
   "version": "1.0.0",
   "include": [
-    "public/steam-timekeeper.css"
+    "public/steam-timekeeper.css",
+    "components/public"
   ]
 }
