@@ -1,6 +1,6 @@
 import { GameSession } from '@components/TimeManager';
 import { container } from 'shared';
-import { SteamAppOverview } from 'steam-types/Global/stores/SteamUIStore/index';
+import { SteamAppOverview } from 'steam-types/Global/stores/AppStore';
 
 const CHECK_INTERVAL = 10000;
 

@@ -8,8 +8,8 @@ export class AppDataStore implements IAppDataStore {
   }
 
   getAppData(appId: string): AppData | null {
-    const info = window.appInfoStore.m_mapAppInfo.get(Number(appId));
-    if (!info) {
+    const app = appStore.m_mapApps.get(Number(appId));
+    if (!app) {
       return {
         appId,
         name: `unknown ${appId}`,
@@ -17,10 +17,18 @@ export class AppDataStore implements IAppDataStore {
       };
     }
 
+    let iconUrl;
+    const iconHash = app.icon_hash;
+    if (iconHash !== undefined) {
+      iconUrl = `/assets/${appId}/${iconHash}.jpg`;
+    } else {
+      iconUrl = appStore.GetIconURLForApp(app) ?? '';
+    }
+
     return {
       appId,
-      name: info.m_strName,
-      icon: `/assets/${appId}/${info.m_strIconURL}.jpg`,
+      name: app.display_name,
+      icon: iconUrl,
     };
   }
 }

@@ -3,8 +3,8 @@ import { AppDataStore } from 'AppDataStore';
 import { OnPopupCreation } from 'onPopupCreation';
 import { startCheckRunningApps } from 'runningApps';
 import { container, initContainer } from 'shared';
-import { CGameRecording_TimelineEntryChanged_Notification } from 'steam-types';
-import { gameRecordingRequestHandler } from 'steam-types/Runtime';
+import { CGameRecording_TimelineEntryChanged_Notification } from 'steam-types/Protobufs/steam/webuimessages_gamerecording';
+import { gameRecordingRequestHandler } from 'steam-types/Runtime/Services';
 import { ProtobufNotification } from 'steam-types/types/shared/protobuf';
 import './components/TimePopup';
 

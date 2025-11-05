@@ -1,4 +1,4 @@
-import { TimelineEntryType } from 'steam-types';
+import { TimelineEntryType } from 'steam-types/Protobufs/steam/webuimessages_gamerecording';
 import { AppData } from '../AppDataStore/IAppDataStore';
 import { Day, GameSession } from './Types';
 
