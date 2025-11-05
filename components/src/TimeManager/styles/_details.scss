@@ -1,0 +1,178 @@
+// Details panel and achievements
+
+@use 'mixins' as *;
+
+.tm-details-panel {
+  background: linear-gradient(135deg, var(--bg) 0%, var(--bg-light) 100%);
+  border: 1px solid var(--border-medium);
+  border-radius: 12px;
+  overflow: hidden;
+  animation: slideUp 0.3s ease;
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.tm-details-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 32px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  background: var(--bg-dark);
+}
+
+.tm-details-game {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.tm-details-icon {
+  font-size: 48px;
+  background: var(--bg-light);
+  border-radius: 16px;
+  padding: 16px;
+  border: none;
+  box-shadow: var(--shadow-s);
+  width: 80px;
+  height: 80px;
+  @include flex-center;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 8px;
+    box-shadow: var(--shadow-s);
+  }
+}
+
+.tm-details-title {
+  font-size: 32px;
+  font-weight: 400;
+  margin: 0 0 4px 0;
+  color: var(--text);
+  @include header-font;
+  letter-spacing: 2px;
+  line-height: 1;
+}
+
+.tm-details-subtitle {
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.tm-close-btn {
+  background: var(--bg-light);
+  border: none;
+  color: var(--text-secondary);
+  width: 36px;
+  height: 36px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  box-shadow: var(--shadow-s);
+
+  &:hover {
+    background: oklch(0.5 0.15 25);
+    color: #fff;
+    box-shadow: var(--shadow-m);
+  }
+
+  &:active {
+    transform: scale(0.95);
+    box-shadow: var(--shadow-s);
+  }
+}
+
+.tm-details-body {
+  padding: 24px;
+}
+
+.tm-details-section-title {
+  font-size: 24px;
+  font-weight: 400;
+  color: var(--text);
+  margin: 0 0 16px 0;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  @include header-font;
+}
+
+/* Achievements */
+.tm-achievements {
+  display: grid;
+  gap: 12px;
+}
+
+.tm-achievement {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: var(--bg-dark);
+  border: none;
+  border-radius: 8px;
+  padding: 16px;
+  transition: all 0.2s ease;
+  box-shadow: var(--shadow-s);
+
+  &:hover {
+    background: var(--bg-light);
+    transform: translateX(4px);
+    box-shadow: var(--shadow-m);
+  }
+}
+
+.tm-achievement-icon {
+  font-size: 32px;
+  background: var(--bg-light);
+  border-radius: 50%;
+  padding: 12px;
+  border: 2px solid var(--accent);
+  flex-shrink: 0;
+  box-shadow: var(--shadow-s);
+}
+
+.tm-achievement-info {
+  flex: 1;
+}
+
+.tm-achievement-name {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+
+.tm-achievement-desc {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.tm-no-achievements {
+  text-align: center;
+  padding: 40px;
+  color: var(--text-secondary);
+
+  p {
+    margin: 0;
+    font-size: 14px;
+  }
+}

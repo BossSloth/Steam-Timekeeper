@@ -1,0 +1,18 @@
+// Base container and global styles
+
+.time-manager {
+  min-height: 100vh;
+  background: linear-gradient(135deg, oklch(0.16 0.015 270) 0%, oklch(0.19 0.01 250) 100%);
+  color: var(--text);
+  font-family: var(--font-family);
+  padding: 0 24px;
+
+  *, *::before, *::after {
+    box-sizing: border-box;
+  }
+}
+
+::webkit-scrollbar {
+  // TODO: Use some custom scrollbar that doesn't shift the content to the left
+  display: none;
+}

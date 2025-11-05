@@ -1,0 +1,35 @@
+// Theme Variables
+// These CSS custom properties can be overridden at runtime for theme switching
+:root:has(.theme-dark) {
+  // Color palette
+  --bg-dark: oklch(0.18 0.01 270); /* Very subtle purple tint */
+  --bg: oklch(0.25 0.015 270); /* Slightly lighter with purple tint */
+  --bg-light: oklch(0.35 0.02 270); /* Even lighter */
+  --bg-elevated: oklch(0.22 0.012 270); /* For timeline - between dark and bg */
+  --text: oklch(0.96 0 0);
+  --text-secondary: oklch(0.7 0 0);
+  --text-dim: oklch(0.55 0 0);
+  --accent: oklch(0.65 0.19 200); /* Vibrant cyan-blue */
+  --accent-hover: oklch(0.72 0.22 200);
+  --accent-dim: oklch(0.5 0.15 200);
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  --border-medium: rgba(255, 255, 255, 0.12);
+
+  // Typography
+  --font-family: "IBM Plex Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --header-font-family: "Bebas Neue", sans-serif;
+
+  // Shadows
+  --shadow-s:
+    inset 0 1px 2px #FFFFFF30, /* top highlight */
+    0 1px 2px #00000030, /* dark shadow */
+    0 2px 4px #00000015; /* soft shadow */
+  --shadow-m:
+    inset 0 1px 2px #FFFFFF50, /* top highlight */
+    0 2px 4px #00000030, /* dark shadow */
+    0 4px 8px #00000015; /* soft shadow */
+  --shadow-l:
+    inset 0 1px 2px #FFFFFF70, /* top highlight */
+    0 4px 6px #00000030, /* dark shadow */
+    0 6px 10px #00000015; /* soft shadow */
+}

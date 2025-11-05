@@ -1,0 +1,200 @@
+@use 'mixins' as *;
+
+.tm-timeline {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-medium);
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 24px;
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1),
+    0 1px 2px rgba(0, 0, 0, 0.2);
+  position: relative;
+
+  /* Subtle glow effect */
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.2) 50%,
+      transparent 100%);
+    pointer-events: none;
+  }
+}
+
+.tm-time-header {
+  display: flex;
+  border-bottom: 2px solid var(--border-medium);
+  background: linear-gradient(180deg, oklch(0.2 0.015 270) 0%, var(--bg-dark) 100%);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.tm-day-label {
+  width: 80px;
+  flex-shrink: 0;
+  padding: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-align: center;
+  border-right: 2px solid var(--border-medium);
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.tm-hours {
+  display: flex;
+  flex: 1;
+  position: relative;
+}
+
+.tm-hour-mark {
+  flex: 1;
+  padding: 8px 4px;
+  font-size: 11px;
+  color: var(--text-dim);
+  text-align: center;
+  border-left: 1px solid var(--border-subtle);
+
+  &:first-child {
+    border-left: none;
+  }
+}
+
+/* Days and sessions */
+.tm-days {
+  position: relative;
+}
+
+.tm-day-row {
+  display: flex;
+  border-bottom: 2px solid var(--border-medium);
+  min-height: 70px;
+  background: var(--bg);
+  transition: all 0.2s ease;
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  &:hover {
+    background: var(--bg-light);
+  }
+
+  .tm-day-label {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 4px;
+    background: linear-gradient(135deg, rgba(0, 0, 0, 0.3) 0%, rgba(0, 0, 0, 0.2) 100%);
+  }
+
+  .tm-day-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .tm-day-date {
+    font-size: 12px;
+    color: var(--text-secondary);
+    font-weight: 500;
+  }
+}
+
+.tm-sessions-track {
+  flex: 1;
+  position: relative;
+  padding: 8px 0;
+
+  /* Hour grid lines */
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    --hour-count: 24;
+    background: repeating-linear-gradient(
+      to right,
+      transparent,
+      transparent calc(100% / var(--hour-count, 24) - 1px),
+      rgba(255, 255, 255, 0.06) calc(100% / var(--hour-count, 24) - 1px),
+      rgba(255, 255, 255, 0.06) calc(100% / var(--hour-count, 24))
+    );
+    pointer-events: none;
+  }
+
+  /* Midnight marker (12 AM) - solid vertical line */
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: rgb(115 117 125);
+    pointer-events: none;
+    z-index: 1;
+    /* Use CSS variable for dynamic positioning based on timeline start */
+    left: var(--midnight-position, 0);
+  }
+
+  /* Split track for days with midnight-spanning sessions */
+  &.tm-sessions-track-split {
+    min-height: 132px; /* Two rows: 54px (session) + 8px (padding) = 62px per row, plus 8px top/bottom padding */
+    padding: 8px 0;
+
+    /* Add visual divider between top and bottom sections using background image */
+    background-image:
+      linear-gradient(
+        to right,
+        transparent,
+        var(--border-medium) 5%,
+        var(--border-medium) 95%,
+        transparent
+      );
+    background-size: 100% 2px;
+    background-position: center;
+    background-repeat: no-repeat;
+  }
+}
+
+/* Current time indicator - real DOM element */
+.tm-current-time-indicator {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: linear-gradient(to bottom,
+    transparent 0%,
+    oklch(0.549 0.17 25) 5%,
+    oklch(0.549 0.18 25) 50%,
+    oklch(0.549 0.17 25) 95%,
+    transparent 100%
+  );
+  box-shadow: 0 0 6px rgba(255, 120, 80, 0.3);
+  pointer-events: none;
+  z-index: 3;
+  animation: currentTimePulse 3s ease-in-out infinite;
+  transition: all 0.2s ease;
+}
+
+@keyframes currentTimePulse {
+  0%, 100% {
+    opacity: 0.8;
+  }
+  50% {
+    opacity: 1;
+  }
+}

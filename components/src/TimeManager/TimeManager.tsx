@@ -55,7 +55,7 @@ export function TimeManager({ container }: TimeManagerProps): React.ReactNode {
 
   return (
     <TimelineProvider value={contextValue}>
-      <div className="time-manager">
+      <div className="time-manager theme-dark">
         <Header
           weekStart={weekStart}
           weekEnd={weekEnd}

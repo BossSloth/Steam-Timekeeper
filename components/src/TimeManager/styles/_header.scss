@@ -1,0 +1,75 @@
+@use 'mixins' as *;
+
+.tm-header {
+  margin-bottom: 32px;
+  padding-top: 24px;
+}
+
+.tm-header-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.tm-title {
+  font-size: 42px;
+  font-weight: 300;
+  margin: 0;
+  color: var(--text);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  @include header-font;
+}
+
+.tm-date-range {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 10px 24px;
+  border-radius: 999px;
+  background: var(--bg);
+  border: 1px solid var(--border-subtle);
+  box-shadow: var(--shadow-s);
+}
+
+.tm-nav-btn,
+.tm-today-btn {
+  background: var(--bg);
+  border: none;
+  color: var(--text);
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.2s ease;
+  box-shadow: var(--shadow-s);
+
+  &:hover {
+    background: var(--bg-light);
+    box-shadow: var(--shadow-m);
+  }
+
+  &:active {
+    transform: translateY(1px);
+    box-shadow: var(--shadow-s);
+  }
+}
+
+.tm-nav-btn {
+  font-size: 24px;
+  padding: 4px 12px;
+  line-height: 1;
+  width: 42px;
+  height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tm-date-text {
+  font-size: 16px;
+  color: var(--text);
+  min-width: 200px;
+  text-align: center;
+}

@@ -1,0 +1,40 @@
+// Statistics cards
+
+.tm-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+}
+
+.tm-stat-card {
+  background: var(--bg);
+  border: 1px solid var(--border-subtle);
+  border-radius: 10px;
+  padding: 20px;
+  text-align: center;
+  transition: all 0.3s ease;
+  box-shadow: var(--shadow-s);
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-m);
+    border-color: var(--border-medium);
+  }
+}
+
+.tm-stat-value {
+  font-size: 36px;
+  font-weight: bold;
+  background: linear-gradient(135deg, var(--accent-hover) 0%, var(--accent) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 8px;
+}
+
+.tm-stat-label {
+  font-size: 13px;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
