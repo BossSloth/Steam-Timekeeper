@@ -4,8 +4,8 @@ import { MOCK_APP_DATA } from '../TimeManager';
 import { AppAchievements, AppData, IAppDataStore } from './IAppDataStore';
 
 export class MockAppDataStore implements IAppDataStore {
-  getAppData(appId: string): AppData | null {
-    return MOCK_APP_DATA[appId];
+  async getAppData(appId: string): Promise<AppData | null> {
+    return Promise.resolve(MOCK_APP_DATA[appId]);
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars

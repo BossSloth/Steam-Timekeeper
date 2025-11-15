@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { PlayerAchievement } from 'steam-types/Global/stores/AppDetailsStore';
-import { IAppDataStore } from '../../AppDataStore/IAppDataStore';
+import { AppData, IAppDataStore } from '../../AppDataStore/IAppDataStore';
 import { GameSession } from '../Types';
 import { getDuration } from '../utils';
 import { formatDuration, formatTime } from '../utils/dateUtils';
@@ -12,21 +12,34 @@ interface SessionDetailsPanelProps {
 }
 
 function SessionDetailsPanel({ session, appDataStore, onClose }: SessionDetailsPanelProps): React.ReactNode {
-  const appData = appDataStore.getAppData(session.appId);
+  const [appData, setAppData] = useState<AppData | null>(null);
   const [achievements, setAchievements] = useState<PlayerAchievement[]>([]);
 
   useEffect(() => {
-    async function loadAchievements(): Promise<void> {
+    let cancelled = false;
+
+    async function loadData(): Promise<void> {
+      // Load app data
+      const data = await appDataStore.getAppData(session.appId);
+      if (!cancelled) {
+        setAppData(data);
+      }
+
+      // Load achievements
       // TODO: implement better caching
       const appAchievements = await appDataStore.getAppAchievements(session.appId);
-      if (appAchievements) {
+      if (!cancelled && appAchievements) {
         setAchievements(appAchievements.achievements);
       }
     }
 
-    loadAchievements().catch((err: unknown) => {
-      console.error('Failed to load achievements:', err);
+    loadData().catch((err: unknown) => {
+      console.error('Failed to load data:', err);
     });
+
+    return (): void => {
+      cancelled = true;
+    };
   }, [appDataStore, session.appId]);
 
   return (

@@ -1,5 +1,6 @@
 /* eslint-disable react/no-multi-comp */
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
+import { AppData } from '../../AppDataStore/IAppDataStore';
 import { HOURS_PER_DAY, MINIMUM_SESSION_DURATION } from '../Constants';
 import { useTimelineContext } from '../contexts/TimelineContext';
 import { Day, GameSession } from '../Types';
@@ -134,15 +135,30 @@ export function SessionBlock({
 }: SessionBlockProps): React.ReactNode {
   const { appDataStore, selectedSession, hoveredSessionId, setSelectedSession, setHoveredSessionId } = useTimelineContext();
   const { id } = session;
+  const [appData, setAppData] = useState<AppData | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function loadAppData(): Promise<void> {
+      const data = await appDataStore.getAppData(session.appId);
+      if (!cancelled) {
+        setAppData(data);
+      }
+    }
+
+    loadAppData().catch((err: unknown) => {
+      console.error('Failed to load app data:', err);
+    });
+
+    return (): void => {
+      cancelled = true;
+    };
+  }, [appDataStore, session.appId]);
 
   if (id === undefined || getDuration(session) < MINIMUM_SESSION_DURATION) {
     return null;
   }
-
-  const appData = useMemo(
-    () => appDataStore.getAppData(session.appId),
-    [appDataStore, session.appId],
-  );
   const { sessionStartDay, sessionEndDay, spansMidnight } = getSessionDayInfo(session);
   const dayTime = getDateAtMidnight(dayDate);
   const isStartDay = spansMidnight && dayTime.getTime() === sessionStartDay.getTime();

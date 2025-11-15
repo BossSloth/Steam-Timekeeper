@@ -2,7 +2,7 @@ import { PlayerAchievement } from 'steam-types/Global/stores/AppDetailsStore';
 
 export interface IAppDataStore {
   getAppAchievements(appId: string): Promise<AppAchievements | null>;
-  getAppData(appId: string): AppData | null;
+  getAppData(appId: string): Promise<AppData | null>;
 }
 
 export interface AppData {
