@@ -1,4 +1,4 @@
-import { TimelineEntryType } from 'steam-types';
+import { TimelineEntryType } from 'steam-types/Protobufs/steam/webuimessages_gamerecording';
 
 export interface Achievement {
   description: string;
@@ -29,6 +29,7 @@ export interface AchievementTimelineEntry extends TimelineEntry {
 }
 
 export interface GameSession {
+  accountId: string | null;
   achievementEntries: AchievementTimelineEntry[];
   appId: string;
   endTime: Date;

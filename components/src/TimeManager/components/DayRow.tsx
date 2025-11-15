@@ -1,6 +1,6 @@
 /* eslint-disable react/no-multi-comp */
 import React, { useCallback, useEffect, useState } from 'react';
-import { AppData } from '../../AppDataStore/IAppDataStore';
+import { AppData, FriendData } from '../../SteamDataStore/ISteamDataStore';
 import { HOURS_PER_DAY, MINIMUM_SESSION_DURATION } from '../Constants';
 import { useTimelineContext } from '../contexts/TimelineContext';
 import { Day, GameSession } from '../Types';
@@ -133,15 +133,16 @@ export function SessionBlock({
   hasMidnightSessions,
   position,
 }: SessionBlockProps): React.ReactNode {
-  const { appDataStore, selectedSession, hoveredSessionId, setSelectedSession, setHoveredSessionId } = useTimelineContext();
+  const { steamDataStore, selectedSession, hoveredSessionId, setSelectedSession, setHoveredSessionId } = useTimelineContext();
   const { id } = session;
   const [appData, setAppData] = useState<AppData | null>(null);
+  const [friendData, setFriendData] = useState<FriendData | null>(null);
 
   useEffect(() => {
     let cancelled = false;
 
     async function loadAppData(): Promise<void> {
-      const data = await appDataStore.getAppData(session.appId);
+      const data = await steamDataStore.getAppData(session.appId);
       if (!cancelled) {
         setAppData(data);
       }
@@ -154,7 +155,30 @@ export function SessionBlock({
     return (): void => {
       cancelled = true;
     };
-  }, [appDataStore, session.appId]);
+  }, [steamDataStore, session.appId]);
+
+  useEffect(() => {
+    if (session.accountId === null) return undefined;
+
+    let cancelled = false;
+
+    async function loadFriendData(): Promise<void> {
+      if (session.accountId === null) return;
+
+      const data = await steamDataStore.getFriendData(session.accountId);
+      if (!cancelled) {
+        setFriendData(data);
+      }
+    }
+
+    loadFriendData().catch((err: unknown) => {
+      console.error('Failed to load friend data:', err);
+    });
+
+    return (): void => {
+      cancelled = true;
+    };
+  }, [steamDataStore, session.accountId]);
 
   if (id === undefined || getDuration(session) < MINIMUM_SESSION_DURATION) {
     return null;
@@ -197,7 +221,11 @@ export function SessionBlock({
         top: topPosition,
       } as React.CSSProperties}
       onClick={() => {
-        setSelectedSession(session);
+        if (selectedSession?.id === session.id) {
+          setSelectedSession(null);
+        } else {
+          setSelectedSession(session);
+        }
       }}
       onMouseEnter={() => {
         setHoveredSessionId(id);
@@ -207,13 +235,18 @@ export function SessionBlock({
       }}
     >
       <div className="tm-session-content">
-        <span className="tm-session-icon">
+        <span className="tm-session-icon" title={appData?.name}>
           <img src={appData?.icon} alt={appData?.name} />
         </span>
         <div className="tm-session-info">
           <div className="tm-session-name">{appData?.name}</div>
           <div className="tm-session-time">{formatDuration(getDuration(session))}</div>
         </div>
+        {friendData && (
+          <div className="tm-session-friend" title={`Played by ${friendData.displayName}`}>
+            <img src={friendData.avatarUrl} alt={friendData.displayName} className="tm-session-friend-avatar" />
+          </div>
+        )}
       </div>
     </button>
   );

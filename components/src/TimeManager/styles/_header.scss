@@ -73,3 +73,209 @@
   min-width: 200px;
   text-align: center;
 }
+
+.tm-header-controls {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+// Friend Selector Styles
+.tm-friend-selector {
+  position: relative;
+}
+
+.tm-friend-selector-btn {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 20px;
+  background: var(--bg);
+  border: 1px solid var(--border-subtle);
+  border-radius: 999px;
+  color: var(--text);
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.2s ease;
+  box-shadow: var(--shadow-s);
+
+  &:hover {
+    background: var(--bg-light);
+    box-shadow: var(--shadow-m);
+  }
+
+  .tm-dropdown-arrow {
+    font-size: 10px;
+    transition: transform 0.2s ease;
+  }
+}
+
+.tm-friend-dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  min-width: 340px;
+  background: var(--bg);
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+  box-shadow: var(--shadow-l);
+  z-index: 1000;
+  overflow: hidden;
+}
+
+.tm-friend-dropdown-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+  border-bottom: 1px solid var(--border-subtle);
+  background: var(--bg-dark);
+}
+
+.tm-friend-dropdown-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.tm-friend-dropdown-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.tm-friend-action-btn {
+  padding: 4px 12px;
+  background: var(--bg-light);
+  border: 1px solid var(--border-subtle);
+  border-radius: 6px;
+  color: var(--text);
+  cursor: pointer;
+  font-size: 12px;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: var(--accent);
+    color: var(--text-dark);
+    border-color: var(--accent);
+  }
+}
+
+.tm-friend-list {
+  max-height: 400px;
+  overflow-y: auto;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.tm-friend-hr {
+  height: 1px;
+  background: var(--border-subtle);
+}
+
+.tm-friend-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: var(--bg-light);
+  }
+
+  &.selected {
+    background: var(--bg-light);
+  }
+
+  &.tm-current-user {
+    background: var(--accent);
+    color: var(--text-dark);
+    cursor: pointer;
+    margin-bottom: 8px;
+    border-bottom: 1px solid var(--border-medium);
+
+    &:hover {
+      background: color-mix(in srgb, var(--accent) 90%, black);
+    }
+
+    &.selected {
+      background: var(--accent);
+    }
+
+    .tm-friend-name {
+      color: var(--text-dark);
+      font-weight: 600;
+    }
+  }
+
+  input[type='checkbox'] {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+    box-shadow: var(--shadow-s);
+  }
+}
+
+.tm-friend-search {
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--border-medium);
+}
+
+.tm-friend-search-input {
+  width: 100%;
+  padding: 8px 12px;
+  background: var(--bg-light);
+  border: 1px solid var(--border-medium);
+  border-radius: 6px;
+  color: var(--text);
+  font-size: 13px;
+  outline: none;
+  transition: all 0.2s ease;
+
+  &::placeholder {
+    color: var(--text-secondary);
+    font-style: normal;
+  }
+
+  &:focus {
+    border-color: var(--accent);
+    background: var(--bg);
+  }
+}
+
+.tm-friend-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 2px;
+  object-fit: cover;
+  box-shadow: var(--shadow-s);
+}
+
+.tm-friend-name {
+  font-size: 14px;
+  color: var(--text);
+  flex: 1;
+}
+
+.tm-friend-session-count {
+  font-size: 12px;
+  color: var(--text-secondary);
+  background: var(--bg-light);
+  padding: 2px 6px;
+  border-radius: 10px;
+  min-width: 20px;
+  text-align: center;
+  font-weight: 500;
+  box-shadow: var(--shadow-s);
+}
+
+.tm-no-results {
+  padding: 24px 16px;
+  text-align: center;
+  color: var(--text-secondary);
+  font-size: 13px;
+}

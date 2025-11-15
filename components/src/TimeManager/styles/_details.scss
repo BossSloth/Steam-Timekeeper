@@ -59,10 +59,17 @@
   }
 }
 
+.tm-details-title-row {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 4px;
+}
+
 .tm-details-title {
   font-size: 32px;
   font-weight: 400;
-  margin: 0 0 4px 0;
+  margin: 0;
   color: var(--text);
   @include header-font;
   letter-spacing: 2px;
@@ -73,6 +80,30 @@
   font-size: 14px;
   color: var(--text-secondary);
   margin: 0;
+}
+
+.tm-details-friend {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 4px;
+  background: var(--bg-light);
+  border-radius: 6px;
+  width: fit-content;
+}
+
+.tm-details-friend-avatar {
+  width: 20px;
+  height: 20px;
+  border-radius: 2px;
+  border: 2px solid var(--accent);
+  object-fit: cover;
+}
+
+.tm-details-friend-name {
+  font-size: 12px;
+  color: var(--text);
+  font-weight: 500;
 }
 
 .tm-close-btn {

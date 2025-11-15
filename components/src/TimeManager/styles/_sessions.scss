@@ -133,3 +133,17 @@
   color: rgba(255, 255, 255, 0.8);
   white-space: nowrap;
 }
+
+.tm-session-friend {
+  @include flex-center;
+  margin-right: 2px;
+}
+
+.tm-session-friend-avatar {
+  width: 24px;
+  height: 24px;
+  border-radius: 2px;
+  border: 2px solid rgba(255, 255, 255, 0.5);
+  object-fit: cover;
+  box-shadow: var(--shadow-s);
+}

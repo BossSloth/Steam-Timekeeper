@@ -4,7 +4,7 @@ import { MOCK_SESSIONS } from './MockSessions';
 import { GameSession } from './Types';
 
 const DB_NAME = 'SteamTimekeeperDB';
-const DB_VERSION = 1;
+const DB_VERSION = 2;
 const SESSIONS_STORE = 'sessions';
 const METADATA_STORE = 'metadata';
 
@@ -74,6 +74,8 @@ export class SessionDatabase {
     });
 
     await this.fillMocked();
+
+    await this.migrateData();
   }
 
   private async fillMocked(): Promise<void> {
@@ -86,6 +88,23 @@ export class SessionDatabase {
 
     // Add mocked sessions
     this.addSessions(MOCK_SESSIONS);
+  }
+
+  private async migrateData(): Promise<void> {
+    if (!this.db) {
+      throw new Error('Database not initialized');
+    }
+
+    const tx = this.db.transaction(SESSIONS_STORE, 'readwrite');
+    let cursor = await tx.store.openCursor();
+    while (cursor) {
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+      if (cursor.value?.accountId === undefined) {
+        cursor.value.accountId = null;
+        await cursor.update(cursor.value);
+      }
+      cursor = await cursor.continue();
+    }
   }
 
   async addSession(session: GameSession): Promise<number> {

@@ -1,13 +1,15 @@
 import React, { createContext, useContext } from 'react';
-import { IAppDataStore } from '../../AppDataStore/IAppDataStore';
+import { ISteamDataStore } from '../../SteamDataStore/ISteamDataStore';
 import { GameSession } from '../Types';
 
 interface TimelineContextValue {
   setHoveredSessionId(id: number | null): void;
-  setSelectedSession(session: GameSession): void;
-  readonly appDataStore: IAppDataStore;
+  setSelectedFriendIds(friendIds: string[]): void;
+  setSelectedSession(session: GameSession | null): void;
   readonly hoveredSessionId: number | null;
+  readonly selectedFriendIds: string[];
   readonly selectedSession: GameSession | null;
+  readonly steamDataStore: ISteamDataStore;
   readonly timelineStartHour: number;
 }
 

@@ -1,52 +1,68 @@
 /* eslint-disable react/no-multi-comp */
 import React from 'react';
-import { Stats } from '../Types';
+import { FriendData } from '../../SteamDataStore/ISteamDataStore';
+import { GameSession, Stats } from '../Types';
 import { formatDate } from '../utils/dateUtils';
+import { FriendSelector } from './FriendSelector';
 
 interface HeaderProps {
   goToToday(): void;
   navigateWeek(offset: number): void;
+  onFriendSelectionChange(selectedIds: string[]): void;
+  readonly currentUser: FriendData;
+  readonly friends: FriendData[];
+  readonly selectedFriendIds: string[];
+  readonly sessions: GameSession[];
   readonly stats: Stats;
   readonly weekEnd: Date;
   readonly weekStart: Date;
 }
 
-function Header({ weekStart, weekEnd, stats, navigateWeek, goToToday }: HeaderProps): React.ReactNode {
+function Header({ weekStart, weekEnd, stats, navigateWeek, goToToday, friends, currentUser, selectedFriendIds, sessions, onFriendSelectionChange }: HeaderProps): React.ReactNode {
   return (
     <div className="tm-header">
       <div className="tm-header-top">
         <h1 className="tm-title">Gaming Activity</h1>
-        <div className="tm-date-range">
-          <button
-            type="button"
-            className="tm-nav-btn"
-            aria-label="Previous week"
-            onClick={() => {
-              navigateWeek(-1);
-            }}
-          >
-            &lt;
-          </button>
-          <span className="tm-date-text">
-            {formatDate(weekStart)} - {formatDate(weekEnd)}
-          </span>
-          <button
-            type="button"
-            className="tm-nav-btn"
-            aria-label="Next week"
-            onClick={() => {
-              navigateWeek(1);
-            }}
-          >
-            &gt;
-          </button>
-          <button
-            type="button"
-            className="tm-today-btn"
-            onClick={goToToday}
-          >
-            Today
-          </button>
+        <div className="tm-header-controls">
+          <FriendSelector
+            friends={friends}
+            currentUser={currentUser}
+            selectedFriendIds={selectedFriendIds}
+            sessions={sessions}
+            onSelectionChange={onFriendSelectionChange}
+          />
+          <div className="tm-date-range">
+            <button
+              type="button"
+              className="tm-nav-btn"
+              aria-label="Previous week"
+              onClick={() => {
+                navigateWeek(-1);
+              }}
+            >
+              &lt;
+            </button>
+            <span className="tm-date-text">
+              {formatDate(weekStart)} - {formatDate(weekEnd)}
+            </span>
+            <button
+              type="button"
+              className="tm-nav-btn"
+              aria-label="Next week"
+              onClick={() => {
+                navigateWeek(1);
+              }}
+            >
+              &gt;
+            </button>
+            <button
+              type="button"
+              className="tm-today-btn"
+              onClick={goToToday}
+            >
+              Today
+            </button>
+          </div>
         </div>
       </div>
 

@@ -3,8 +3,9 @@ import { Container } from '../Container';
 import { Header } from './components/Header';
 import { SessionDetailsPanel } from './components/SessionDetailsPanel';
 import { Timeline } from './components/Timeline';
-import { HOURS_PER_DAY } from './Constants';
+import { CURRENT_USER_ID, HOURS_PER_DAY } from './Constants';
 import { TimelineProvider } from './contexts/TimelineContext';
+import { useFriendFilter } from './hooks';
 import { useSessionData } from './hooks/useSessionData';
 import { useWeekNavigation } from './hooks/useWeekNavigation';
 import { GameSession, Stats } from './Types';
@@ -17,9 +18,11 @@ export interface TimeManagerProps {
 export function TimeManager({ container }: TimeManagerProps): React.ReactNode {
   const [selectedSession, setSelectedSession] = useState<GameSession | null>(null);
   const [hoveredSessionId, setHoveredSessionId] = useState<number | null>(null);
+  const [selectedFriendIds, setSelectedFriendIds] = useState<string[]>([CURRENT_USER_ID]);
   const { weekStart, weekEnd, navigateWeek, goToToday } = useWeekNavigation();
-  const { sessions, timelineStartHour, isLoading } = useSessionData(container, weekStart, weekEnd);
-  const { appDataStore } = container;
+  const { sessions, timelineStartHour, isLoading, allWeekSessions } = useSessionData(container, weekStart, weekEnd, selectedFriendIds);
+  const { friends, currentUser, isLoading: isLoadingFriends } = useFriendFilter(container);
+  const { steamDataStore } = container;
 
   const visibleHours = useMemo(
     () => Array.from({ length: HOURS_PER_DAY }, (_, i) => (timelineStartHour + i) % HOURS_PER_DAY),
@@ -39,17 +42,19 @@ export function TimeManager({ container }: TimeManagerProps): React.ReactNode {
 
   const contextValue = useMemo(
     () => ({
-      appDataStore,
+      steamDataStore,
       selectedSession,
       hoveredSessionId,
+      selectedFriendIds,
       setSelectedSession,
       setHoveredSessionId,
+      setSelectedFriendIds,
       timelineStartHour,
     }),
-    [appDataStore, selectedSession, hoveredSessionId, setSelectedSession, setHoveredSessionId, timelineStartHour],
+    [steamDataStore, selectedSession, hoveredSessionId, selectedFriendIds, timelineStartHour],
   );
 
-  if (isLoading) {
+  if (isLoading || isLoadingFriends) {
     return <div className="time-manager">Loading...</div>;
   }
 
@@ -62,6 +67,11 @@ export function TimeManager({ container }: TimeManagerProps): React.ReactNode {
           stats={stats}
           navigateWeek={navigateWeek}
           goToToday={goToToday}
+          friends={friends}
+          currentUser={currentUser}
+          selectedFriendIds={selectedFriendIds}
+          sessions={allWeekSessions}
+          onFriendSelectionChange={setSelectedFriendIds}
         />
 
         <Timeline
@@ -73,7 +83,7 @@ export function TimeManager({ container }: TimeManagerProps): React.ReactNode {
         {selectedSession && (
           <SessionDetailsPanel
             session={selectedSession}
-            appDataStore={appDataStore}
+            steamDataStore={steamDataStore}
             onClose={() => { setSelectedSession(null); }}
           />
         )}

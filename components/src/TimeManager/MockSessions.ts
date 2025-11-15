@@ -1,5 +1,5 @@
 import { TimelineEntryType } from 'steam-types/Protobufs/steam/webuimessages_gamerecording';
-import { AppData } from '../AppDataStore/IAppDataStore';
+import { AppData } from '../SteamDataStore/ISteamDataStore';
 import { Day, GameSession } from './Types';
 
 export const MOCK_SESSIONS: GameSession[] = [
@@ -12,6 +12,7 @@ export const MOCK_SESSIONS: GameSession[] = [
       { id: 'a2', time: easyDate(Day.Tue, '01:30'), type: TimelineEntryType.Achievement, achievementId: 'ACH_STREET_CRED_10' },
     ],
     markerEntries: [],
+    accountId: null,
   },
   {
     appId: '1245620', // Elden Ring
@@ -19,6 +20,7 @@ export const MOCK_SESSIONS: GameSession[] = [
     endTime: easyDate(Day.Wed, '17:45'),
     achievementEntries: [{ id: 'a3', time: easyDate(Day.Wed, '16:30'), type: TimelineEntryType.Achievement, achievementId: 'ACH_MARGIT_DEFEATED' }],
     markerEntries: [],
+    accountId: null,
   },
   {
     appId: '730', // Counter-Strike 2
@@ -26,6 +28,7 @@ export const MOCK_SESSIONS: GameSession[] = [
     endTime: easyDate(Day.Thu, '23:30'),
     achievementEntries: [],
     markerEntries: [],
+    accountId: null,
   },
   {
     appId: '1086940', // Baldur's Gate 3
@@ -37,6 +40,7 @@ export const MOCK_SESSIONS: GameSession[] = [
       { id: 'a6', time: easyDate(Day.Fri, '20:00'), type: TimelineEntryType.Achievement, achievementId: 'ACH_CRITICAL_HIT_10' },
     ],
     markerEntries: [],
+    accountId: null,
   },
   {
     appId: '252950', // Rocket League
@@ -44,6 +48,7 @@ export const MOCK_SESSIONS: GameSession[] = [
     endTime: easyDate(Day.Sat, '11:30'),
     achievementEntries: [{ id: 'a7-2', time: easyDate(Day.Sat, '11:15'), type: TimelineEntryType.Achievement, achievementId: 'ACH_AERIAL_GOAL' }],
     markerEntries: [],
+    accountId: null,
   },
   {
     appId: '252950', // Rocket League
@@ -51,6 +56,7 @@ export const MOCK_SESSIONS: GameSession[] = [
     endTime: easyDate(Day.Sat, '12:13'),
     achievementEntries: [],
     markerEntries: [],
+    accountId: null,
   },
   {
     appId: '252950', // Rocket League
@@ -58,6 +64,7 @@ export const MOCK_SESSIONS: GameSession[] = [
     endTime: easyDate(Day.Sat, '13:02'),
     achievementEntries: [],
     markerEntries: [],
+    accountId: null,
   },
   {
     appId: '252950', // Rocket League
@@ -65,6 +72,7 @@ export const MOCK_SESSIONS: GameSession[] = [
     endTime: easyDate(Day.Sat, '17:30'),
     achievementEntries: [{ id: 'a7', time: easyDate(Day.Sat, '16:15'), type: TimelineEntryType.Achievement, achievementId: 'ACH_AERIAL_GOAL' }],
     markerEntries: [],
+    accountId: null,
   },
   {
     appId: '29674015216', // Minecraft
@@ -72,6 +80,7 @@ export const MOCK_SESSIONS: GameSession[] = [
     endTime: easyDate(Day.Sat, '02:42'),
     achievementEntries: [],
     markerEntries: [],
+    accountId: null,
   },
   {
     appId: '29674015216', // Minecraft
@@ -79,6 +88,7 @@ export const MOCK_SESSIONS: GameSession[] = [
     endTime: easyDate(Day.Sun, '01:42'),
     achievementEntries: [],
     markerEntries: [],
+    accountId: null,
   },
   {
     appId: '2807960', // Battlefield 6
@@ -86,6 +96,7 @@ export const MOCK_SESSIONS: GameSession[] = [
     endTime: easyDate(Day.Sun, '18:47'),
     achievementEntries: [],
     markerEntries: [],
+    accountId: null,
   },
   {
     appId: '252950', // Rocket League
@@ -93,6 +104,81 @@ export const MOCK_SESSIONS: GameSession[] = [
     endTime: easyDate(Day.Mon, '17:30', 1),
     achievementEntries: [{ id: 'a7-3', time: easyDate(Day.Mon, '16:00', 1), type: TimelineEntryType.Achievement, achievementId: 'ACH_AERIAL_GOAL' }],
     markerEntries: [],
+    accountId: null,
+  },
+  // Friend 1 sessions (accountId: '123456789')
+  {
+    appId: '730', // Counter-Strike 2
+    startTime: easyDate(Day.Tue, '19:00'),
+    endTime: easyDate(Day.Tue, '21:30'),
+    achievementEntries: [],
+    markerEntries: [],
+    accountId: '123456789',
+  },
+  {
+    appId: '252950', // Rocket League
+    startTime: easyDate(Day.Wed, '16:00'),
+    endTime: easyDate(Day.Wed, '18:15'),
+    achievementEntries: [],
+    markerEntries: [],
+    accountId: '123456789',
+  },
+  {
+    appId: '1245620', // Elden Ring
+    startTime: easyDate(Day.Thu, '20:00'),
+    endTime: easyDate(Day.Thu, '23:45'),
+    achievementEntries: [],
+    markerEntries: [],
+    accountId: '123456789',
+  },
+  {
+    appId: '1086940', // Baldur's Gate 3
+    startTime: easyDate(Day.Sat, '10:00'),
+    endTime: easyDate(Day.Sat, '14:30'),
+    achievementEntries: [],
+    markerEntries: [],
+    accountId: '123456789',
+  },
+  // Friend 2 sessions (accountId: '987654321')
+  {
+    appId: '1091500', // Cyberpunk 2077
+    startTime: easyDate(Day.Mon, '18:00'),
+    endTime: easyDate(Day.Mon, '22:30'),
+    achievementEntries: [],
+    markerEntries: [],
+    accountId: '987654321',
+  },
+  {
+    appId: '29674015216', // Minecraft
+    startTime: easyDate(Day.Tue, '15:00'),
+    endTime: easyDate(Day.Tue, '19:45'),
+    achievementEntries: [],
+    markerEntries: [],
+    accountId: '987654321',
+  },
+  {
+    appId: '2807960', // Battlefield 6
+    startTime: easyDate(Day.Fri, '13:00'),
+    endTime: easyDate(Day.Fri, '16:30'),
+    achievementEntries: [],
+    markerEntries: [],
+    accountId: '987654321',
+  },
+  {
+    appId: '252950', // Rocket League
+    startTime: easyDate(Day.Sat, '18:00'),
+    endTime: easyDate(Day.Sat, '20:45'),
+    achievementEntries: [],
+    markerEntries: [],
+    accountId: '987654321',
+  },
+  {
+    appId: '730', // Counter-Strike 2
+    startTime: easyDate(Day.Sun, '16:00'),
+    endTime: easyDate(Day.Sun, '18:30'),
+    achievementEntries: [],
+    markerEntries: [],
+    accountId: '987654321',
   },
 ];
 

@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { MockAppDataStore } from './AppDataStore/MockAppDataStore';
 import { Container } from './Container';
+import { MockSteamDataStore } from './SteamDataStore/MockSteamDataStore';
 import { TimeManager } from './TimeManager';
 
 const MOCKED = true;
-const container = new Container(new MockAppDataStore(), MOCKED);
+const container = new Container(new MockSteamDataStore(), MOCKED);
 
 // Initialize database at module level to prevent double initialization
 let initPromise: Promise<void> | null = null;

@@ -1,6 +1,6 @@
 import { Container } from '@components/Container';
 import { callable } from '@steambrew/client';
-import { AppDataStore } from 'AppDataStore';
+import { SteamDataStore } from 'SteamDataStore';
 import { OnPopupCreation } from 'onPopupCreation';
 import { startCheckRunningApps } from 'runningApps';
 import { container, initComponentsPublicDir, initContainer } from 'shared';
@@ -25,7 +25,7 @@ export default async function PluginMain(): Promise<void> {
   g_PopupManager.AddPopupCreatedCallback(OnPopupCreation);
 
   initContainer(new Container(
-    new AppDataStore(),
+    new SteamDataStore(),
     false,
   ));
 

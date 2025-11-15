@@ -1,35 +1,46 @@
 import React, { useEffect, useState } from 'react';
 import { PlayerAchievement } from 'steam-types/Global/stores/AppDetailsStore';
-import { AppData, IAppDataStore } from '../../AppDataStore/IAppDataStore';
+import { AppData, FriendData, ISteamDataStore } from '../../SteamDataStore/ISteamDataStore';
 import { GameSession } from '../Types';
 import { getDuration } from '../utils';
 import { formatDuration, formatTime } from '../utils/dateUtils';
 
 interface SessionDetailsPanelProps {
   onClose(): void;
-  readonly appDataStore: IAppDataStore;
   readonly session: GameSession;
+  readonly steamDataStore: ISteamDataStore;
 }
 
-function SessionDetailsPanel({ session, appDataStore, onClose }: SessionDetailsPanelProps): React.ReactNode {
+function SessionDetailsPanel({ session, steamDataStore, onClose }: SessionDetailsPanelProps): React.ReactNode {
   const [appData, setAppData] = useState<AppData | null>(null);
   const [achievements, setAchievements] = useState<PlayerAchievement[]>([]);
+  const [friendData, setFriendData] = useState<FriendData | null>(null);
 
   useEffect(() => {
     let cancelled = false;
 
     async function loadData(): Promise<void> {
       // Load app data
-      const data = await appDataStore.getAppData(session.appId);
+      const data = await steamDataStore.getAppData(session.appId);
       if (!cancelled) {
         setAppData(data);
       }
 
       // Load achievements
       // TODO: implement better caching
-      const appAchievements = await appDataStore.getAppAchievements(session.appId);
+      const appAchievements = await steamDataStore.getAppAchievements(session.appId);
       if (!cancelled && appAchievements) {
         setAchievements(appAchievements.achievements);
+      }
+
+      // Load friend data if session has accountId
+      if (session.accountId !== null) {
+        const friend = await steamDataStore.getFriendData(session.accountId);
+        if (!cancelled) {
+          setFriendData(friend);
+        }
+      } else {
+        setFriendData(null);
       }
     }
 
@@ -40,7 +51,7 @@ function SessionDetailsPanel({ session, appDataStore, onClose }: SessionDetailsP
     return (): void => {
       cancelled = true;
     };
-  }, [appDataStore, session.appId]);
+  }, [steamDataStore, session.appId, session.accountId]);
 
   return (
     <div className="tm-details-panel">
@@ -50,7 +61,15 @@ function SessionDetailsPanel({ session, appDataStore, onClose }: SessionDetailsP
             <img src={appData?.icon} alt={appData?.name} />
           </span>
           <div>
-            <h2 className="tm-details-title">{appData?.name}</h2>
+            <div className="tm-details-title-row">
+              <h2 className="tm-details-title">{appData?.name}</h2>
+              {friendData && (
+                <div className="tm-details-friend">
+                  <img src={friendData.avatarUrl} alt={friendData.displayName} className="tm-details-friend-avatar" />
+                  <span className="tm-details-friend-name">{friendData.displayName}</span>
+                </div>
+              )}
+            </div>
             <p className="tm-details-subtitle">
               {formatTime(session.startTime)} - {formatTime(session.endTime)} • {formatDuration(getDuration(session))}
             </p>

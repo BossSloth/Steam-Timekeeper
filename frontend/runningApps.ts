@@ -45,6 +45,7 @@ async function onAppLaunched(appId: string): Promise<void> {
 
   const session: GameSession = {
     achievementEntries: [],
+    accountId: null,
     appId,
     endTime: new Date(),
     markerEntries: [],
