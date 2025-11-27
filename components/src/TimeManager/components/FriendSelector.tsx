@@ -175,7 +175,7 @@ export function FriendSelector({ friends, currentUser, selectedFriendIds, sessio
                   </span>
                 </div>
                 {friend.accountId === CURRENT_USER_ID && filteredFriends.length > 1 && (
-                  <div className="tm-friend-hr" />
+                  <div className="tm-friend-hr" key="tm-friend-hr" />
                 )}
               </>
             ))}
