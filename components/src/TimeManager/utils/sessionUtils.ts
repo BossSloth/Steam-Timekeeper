@@ -41,3 +41,11 @@ export function generateGameColor(gameName: string): string {
 
   return `hsl(${hue}, 75%, 55%)`;
 }
+
+export function getSessionStartHour(session: GameSession): number {
+  return session.startTime.getHours() + session.startTime.getMinutes() / 60;
+}
+
+export function getSessionEndHour(session: GameSession): number {
+  return session.endTime.getHours() + session.endTime.getMinutes() / 60;
+}

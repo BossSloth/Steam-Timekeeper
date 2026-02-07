@@ -4,7 +4,7 @@ import { AppData, FriendData } from '../../SteamDataStore/ISteamDataStore';
 import { HOURS_PER_DAY, MINIMUM_SESSION_DURATION } from '../Constants';
 import { useTimelineContext } from '../contexts/TimelineContext';
 import { Day, GameSession } from '../Types';
-import { SessionPosition, formatDuration, generateGameColor, getDateAtMidnight, getDuration, getSessionDayInfo } from '../utils';
+import { SessionPosition, formatDuration, generateGameColor, getDateAtMidnight, getDuration, getSessionDayInfo, getSessionEndHour, getSessionStartHour } from '../utils';
 
 interface DayRowProps {
   readonly currentTime: Date;
@@ -67,6 +67,34 @@ export function DayRow({
     return { left: `${left}%`, width: `${width}%` };
   }, [normalizeHour]);
 
+  const sessionSpansTimelineStart = useCallback((session: GameSession): boolean => {
+    if (timelineStartHour === 0) return false;
+
+    const startHour = getSessionStartHour(session);
+    const endHour = getSessionEndHour(session);
+
+    return startHour < timelineStartHour && endHour > timelineStartHour;
+  }, [timelineStartHour]);
+
+  const getTimelineStartSplitPositions = useCallback((session: GameSession): { before: SessionPosition; after: SessionPosition; } => {
+    const startHour = getSessionStartHour(session);
+    const endHour = getSessionEndHour(session);
+
+    const hoursBeforeStart = timelineStartHour - startHour;
+    const hoursAfterStart = endHour - timelineStartHour;
+
+    return {
+      before: {
+        left: `${((HOURS_PER_DAY - hoursBeforeStart) / HOURS_PER_DAY) * 100}%`,
+        width: `${(hoursBeforeStart / HOURS_PER_DAY) * 100}%`,
+      },
+      after: {
+        left: '0%',
+        width: `${(hoursAfterStart / HOURS_PER_DAY) * 100}%`,
+      },
+    };
+  }, [timelineStartHour]);
+
   const midnightPosition = React.useMemo(() => {
     const normalizedMidnight = normalizeHour(0);
 
@@ -103,6 +131,31 @@ export function DayRow({
           />
         )}
         {sessions.map((session) => {
+          if (sessionSpansTimelineStart(session)) {
+            const { before, after } = getTimelineStartSplitPositions(session);
+
+            return (
+              <>
+                <SessionBlock
+                  session={session}
+                  dayDate={dayDate}
+                  hasMidnightSessions={hasMidnightSessions}
+                  position={before}
+                  splitPart="before"
+                  key={`${session.id}-${dayDate.getTime()}-before`}
+                />
+                <SessionBlock
+                  session={session}
+                  dayDate={dayDate}
+                  hasMidnightSessions={hasMidnightSessions}
+                  position={after}
+                  splitPart="after"
+                  key={`${session.id}-${dayDate.getTime()}-after`}
+                />
+              </>
+            );
+          }
+
           const position = getSessionPosition(session, dayDate);
 
           return (
@@ -125,6 +178,7 @@ interface SessionBlockProps {
   readonly hasMidnightSessions: boolean;
   readonly position: SessionPosition;
   readonly session: GameSession;
+  readonly splitPart?: 'before' | 'after';
 }
 
 export function SessionBlock({
@@ -132,6 +186,7 @@ export function SessionBlock({
   dayDate,
   hasMidnightSessions,
   position,
+  splitPart,
 }: SessionBlockProps): React.ReactNode {
   const { steamDataStore, selectedSession, hoveredSessionId, setSelectedSession, setHoveredSessionId, timelineStartHour } = useTimelineContext();
   const { id } = session;
@@ -195,16 +250,16 @@ export function SessionBlock({
     if (!hasMidnightSessions) return undefined;
 
     const startHour = session.startTime.getHours() + session.startTime.getMinutes() / 60;
-    const isAfterMidnight = isEndDay || (!spansMidnight && startHour < timelineStartHour);
+    const isAfterMidnight = (isEndDay || (!spansMidnight && startHour < timelineStartHour)) && splitPart !== 'after';
 
     return isAfterMidnight ? '8px' : '78px';
-  }, [hasMidnightSessions, isEndDay, spansMidnight, session.startTime, timelineStartHour]);
+  }, [hasMidnightSessions, isEndDay, spansMidnight, session.startTime, timelineStartHour, splitPart]);
 
   const sessionClasses = React.useMemo(() => {
     const classes = ['tm-session'];
     if (isSelected) classes.push('tm-session-selected');
-    if (isStartDay) classes.push('tm-session-continues');
-    if (isEndDay) classes.push('tm-session-continued');
+    if (isStartDay || splitPart === 'before') classes.push('tm-session-continues');
+    if (isEndDay || splitPart === 'after') classes.push('tm-session-continued');
     if (isHovered) classes.push('tm-session-hovered');
 
     const width = Number(position.width.slice(0, -1));
@@ -212,7 +267,7 @@ export function SessionBlock({
     if (width < 1) classes.push('tm-session-tiny');
 
     return classes.join(' ');
-  }, [isSelected, isStartDay, isEndDay, isHovered, position.width]);
+  }, [isSelected, isStartDay, isEndDay, isHovered, position.width, splitPart]);
 
   return (
     <button

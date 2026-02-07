@@ -26,10 +26,26 @@ export const MOCK_SESSIONS: GameSession[] = [
     accountId: null,
   },
   {
+    appId: '1091500', // Cyberpunk 2077
+    startTime: easyDate(Day.Tue, '5:30'),
+    endTime: easyDate(Day.Tue, '08:20'),
+    achievementEntries: [],
+    markerEntries: [],
+    accountId: null,
+  },
+  {
     appId: '1245620', // Elden Ring
     startTime: easyDate(Day.Wed, '14:00'),
     endTime: easyDate(Day.Wed, '17:45'),
     achievementEntries: [{ id: 'a3', time: easyDate(Day.Wed, '16:30'), type: TimelineEntryType.Achievement, achievementId: 'ACH_MARGIT_DEFEATED' }],
+    markerEntries: [],
+    accountId: null,
+  },
+  {
+    appId: '1245620', // Elden Ring
+    startTime: easyDate(Day.Thu, '6:00'),
+    endTime: easyDate(Day.Thu, '7:00'),
+    achievementEntries: [],
     markerEntries: [],
     accountId: null,
   },
