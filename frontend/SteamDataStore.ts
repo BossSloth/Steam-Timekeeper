@@ -6,6 +6,8 @@ import { SteamFriend } from 'steam-types/Global/stores/FriendStore/FriendStore';
 import { sleep } from 'steam-types/Runtime/helpers';
 
 export class SteamDataStore implements ISteamDataStore {
+  private readonly appDataCache = new Map<string, Promise<AppData | null>>();
+
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async getAppAchievements(_appId: string): Promise<AppAchievements | null> {
     return Promise.resolve(null);
@@ -55,11 +57,16 @@ export class SteamDataStore implements ISteamDataStore {
   }
 
   async getAppData(appId: string): Promise<AppData | null> {
-    if (appStore.m_mapApps.has(Number(appId))) {
-      return this.getLocalAppData(appId);
-    }
+    const cached = this.appDataCache.get(appId);
+    if (cached) return cached;
 
-    return this.getRemoteAppData(appId);
+    const promise = appStore.m_mapApps.has(Number(appId))
+      ? Promise.resolve(this.getLocalAppData(appId))
+      : this.getRemoteAppData(appId);
+
+    this.appDataCache.set(appId, promise);
+
+    return promise;
   }
 
   getLocalAppData(appId: string): AppData | null {
@@ -77,7 +84,8 @@ export class SteamDataStore implements ISteamDataStore {
     if (iconHash !== undefined) {
       iconUrl = `/assets/${appId}/${iconHash}.jpg`;
     } else {
-      iconUrl = appStore.GetIconURLForApp(app) ?? '';
+      const rawUrl = appStore.GetIconURLForApp(app) ?? '';
+      iconUrl = rawUrl.startsWith('data:') ? dataUrlToBlobUrl(rawUrl) : rawUrl;
     }
 
     return {
@@ -102,4 +110,17 @@ export class SteamDataStore implements ISteamDataStore {
       icon: appInfo.icon_url,
     };
   }
+}
+
+function dataUrlToBlobUrl(dataUrl: string): string {
+  const commaIndex = dataUrl.indexOf(',');
+  const header = dataUrl.slice(0, commaIndex);
+  const mime = header.match(/:(.*?);/)?.[1] ?? 'image/png';
+  const binary = atob(dataUrl.slice(commaIndex + 1));
+  const bytes = new Uint8Array(binary.length);
+  for (let i = 0; i < binary.length; i++) {
+    bytes[i] = binary.charCodeAt(i);
+  }
+
+  return URL.createObjectURL(new Blob([bytes], { type: mime }));
 }

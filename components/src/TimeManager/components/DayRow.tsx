@@ -297,11 +297,11 @@ export function SessionBlock({
       }}
     >
       <div className="tm-session-content">
-        <span className="tm-session-icon" title={appData?.name}>
-          <img src={appData?.icon} alt={appData?.name} />
+        <span className="tm-session-icon" title={appData.name}>
+          <img src={appData.icon} alt={appData.name} />
         </span>
         <div className="tm-session-info">
-          <div className="tm-session-name">{appData?.name}</div>
+          <div className="tm-session-name">{appData.name}</div>
           <div className="tm-session-time">{formatDuration(getDuration(session))}</div>
         </div>
         {friendData && (
