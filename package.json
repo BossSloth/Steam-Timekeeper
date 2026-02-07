@@ -3,9 +3,9 @@
     "components/*"
   ],
   "scripts": {
-    "dev-build": "millennium-ttc --build dev --no-update",
+    "dev-build": "millennium-ttc --build dev --watch",
     "sass": "sass ./public/steam-timekeeper.scss:./public/steam-timekeeper.css --style compressed --embed-sources --embed-source-map",
-    "dev": "nodemon --watch webkit --watch frontend --watch components --watch public/steam-timekeeper.scss --ext ts,tsx,js,jsx,scss --exec \"npm run sass && npm run dev-build\"",
+    "dev": "nodemon --watch public/steam-timekeeper.scss --ext scss --exec \"npm run sass && npm run dev-build\"",
     "build": "npm run sass && millennium-ttc --build prod"
   },
   "devDependencies": {
@@ -39,11 +39,12 @@
     "@steambrew/client": "^5.8.0",
     "@steambrew/ttc": "^2.8.6",
     "@steambrew/webkit": "^5.8.0",
+    "idb": "^8.0.3",
     "react-icons": "^5.5.0",
     "sass-embedded": "^1.93.2",
     "zustand": "^5.0.8"
   },
   "patchedDependencies": {
-    "@steambrew/client@5.8.0": "patches/@steambrew%2Fclient@5.8.0.patch"
+    "@steambrew/client@5.8.3": "patches/@steambrew%2Fclient@5.8.3.patch"
   }
 }
