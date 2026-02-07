@@ -169,7 +169,7 @@ export class SessionDatabase {
       const sessionEnd = new Date(session.endTime);
 
       // Include session if it overlaps with the date range
-      if (sessionStart >= startDate && sessionEnd <= endDate) {
+      if (sessionStart <= endDate && sessionEnd >= startDate) {
         sessions.push({ ...session, id: cursor.primaryKey });
       }
 

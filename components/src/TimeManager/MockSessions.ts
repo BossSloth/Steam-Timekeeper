@@ -126,6 +126,14 @@ export const MOCK_SESSIONS: GameSession[] = [
     accountId: null,
   },
   {
+    appId: '2807960', // Battlefield 6
+    startTime: easyDate(Day.Sun, '22:05'),
+    endTime: easyDate(Day.Mon, '02:00', 1),
+    achievementEntries: [],
+    markerEntries: [],
+    accountId: null,
+  },
+  {
     appId: '252950', // Rocket League
     startTime: easyDate(Day.Mon, '15:00', 1),
     endTime: easyDate(Day.Mon, '17:30', 1),
