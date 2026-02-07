@@ -154,5 +154,7 @@ async function onFriendAppQuit(accountId: string): Promise<void> {
 }
 
 export function startCheckRunningApps(): void {
-  setInterval(checkRunningApps, CHECK_INTERVAL);
+  setInterval(() => {
+    checkRunningApps();
+  }, CHECK_INTERVAL);
 }

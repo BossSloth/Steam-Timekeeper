@@ -47,10 +47,11 @@ function useSessionData(
   }, [weekStart, weekEnd, isLoading]);
 
   useEffect(() => {
-    const unsubscribe = sessionDB.addChangeListener(async () =>
+    const unsubscribe = sessionDB.addChangeListener(() => {
       loadSessionData().catch((err: unknown) => {
         console.error('Failed to handle database change:', err);
-      }));
+      });
+    });
 
     return unsubscribe;
   }, [sessionDB, loadSessionData]);
