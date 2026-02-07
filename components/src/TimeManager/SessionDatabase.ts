@@ -38,6 +38,14 @@ export class SessionDatabase {
 
   private readonly listeners = new Set<SessionChangeListener>();
 
+  private ensureDb(): IDBPDatabase<SteamTimekeeperDB> {
+    if (!this.db) {
+      throw new Error('Database not initialized');
+    }
+
+    return this.db;
+  }
+
   addChangeListener(listener: SessionChangeListener): () => void {
     this.listeners.add(listener);
 
@@ -87,15 +95,13 @@ export class SessionDatabase {
     await this.db.clear(SESSIONS_STORE);
 
     // Add mocked sessions
-    this.addSessions(MOCK_SESSIONS);
+    await this.addSessions(MOCK_SESSIONS);
   }
 
   private async migrateData(): Promise<void> {
-    if (!this.db) {
-      throw new Error('Database not initialized');
-    }
+    const db = this.ensureDb();
 
-    const tx = this.db.transaction(SESSIONS_STORE, 'readwrite');
+    const tx = db.transaction(SESSIONS_STORE, 'readwrite');
     let cursor = await tx.store.openCursor();
     while (cursor) {
       // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
@@ -108,10 +114,8 @@ export class SessionDatabase {
   }
 
   async addSession(session: GameSession): Promise<number> {
-    if (!this.db) {
-      throw new Error('Database not initialized');
-    }
-    const id = await this.db.add(SESSIONS_STORE, session);
+    const db = this.ensureDb();
+    const id = await db.add(SESSIONS_STORE, session);
 
     // Recalculate optimal start hour after adding session
     await this.recalculateOptimalStartHour();
@@ -121,11 +125,9 @@ export class SessionDatabase {
   }
 
   async addSessions(sessions: GameSession[]): Promise<void> {
-    if (!this.db) {
-      throw new Error('Database not initialized');
-    }
+    const db = this.ensureDb();
 
-    const tx = this.db.transaction(SESSIONS_STORE, 'readwrite');
+    const tx = db.transaction(SESSIONS_STORE, 'readwrite');
     await Promise.all([
       ...sessions.map(async session => tx.store.add(session)),
       tx.done,
@@ -137,39 +139,30 @@ export class SessionDatabase {
   }
 
   async getSession(id: number): Promise<GameSession | undefined> {
-    if (!this.db) {
-      throw new Error('Database not initialized');
-    }
-
-    return this.db.get(SESSIONS_STORE, id);
+    return this.ensureDb().get(SESSIONS_STORE, id);
   }
 
   async getAllSessions(): Promise<GameSession[]> {
-    if (!this.db) {
-      throw new Error('Database not initialized');
-    }
-
-    return this.db.getAll(SESSIONS_STORE);
+    return this.ensureDb().getAll(SESSIONS_STORE);
   }
 
   async getSessionsByDateRange(startDate: Date, endDate: Date): Promise<GameSession[]> {
-    if (!this.db) {
-      throw new Error('Database not initialized');
-    }
+    const db = this.ensureDb();
 
-    const tx = this.db.transaction(SESSIONS_STORE, 'readonly');
+    // Use IDBKeyRange to only iterate sessions where startTime <= endDate
+    // Sessions starting after endDate can never overlap the range
+    const range = IDBKeyRange.upperBound(endDate);
+    const tx = db.transaction(SESSIONS_STORE, 'readonly');
     const index = tx.store.index('startTime');
     const sessions: GameSession[] = [];
 
-    let cursor = await index.openCursor();
+    let cursor = await index.openCursor(range);
 
     while (cursor) {
       const session = cursor.value;
-      const sessionStart = new Date(session.startTime);
-      const sessionEnd = new Date(session.endTime);
 
-      // Include session if it overlaps with the date range
-      if (sessionStart <= endDate && sessionEnd >= startDate) {
+      // Only need to check endTime >= startDate since startTime <= endDate is guaranteed by the range
+      if (session.endTime >= startDate) {
         sessions.push({ ...session, id: cursor.primaryKey });
       }
 
@@ -180,44 +173,32 @@ export class SessionDatabase {
   }
 
   async updateSession(session: GameSession): Promise<void> {
-    if (!this.db) {
-      throw new Error('Database not initialized');
-    }
+    const db = this.ensureDb();
     if (session.id === undefined) {
       throw new Error('Session ID is undefined, cannot update session without an ID');
     }
-    await this.db.put(SESSIONS_STORE, session, session.id);
+    await db.put(SESSIONS_STORE, session, session.id);
 
     await this.recalculateOptimalStartHour();
     this.notifyListeners();
   }
 
   async deleteSession(id: number): Promise<void> {
-    if (!this.db) {
-      throw new Error('Database not initialized');
-    }
-    await this.db.delete(SESSIONS_STORE, id);
+    await this.ensureDb().delete(SESSIONS_STORE, id);
 
     await this.recalculateOptimalStartHour();
     this.notifyListeners();
   }
 
   async clearAllSessions(): Promise<void> {
-    if (!this.db) {
-      throw new Error('Database not initialized');
-    }
-    await this.db.clear(SESSIONS_STORE);
+    await this.ensureDb().clear(SESSIONS_STORE);
 
     await this.recalculateOptimalStartHour();
     this.notifyListeners();
   }
 
   async getSessionCount(): Promise<number> {
-    if (!this.db) {
-      throw new Error('Database not initialized');
-    }
-
-    return this.db.count(SESSIONS_STORE);
+    return this.ensureDb().count(SESSIONS_STORE);
   }
 
   private static calculateOptimalStartHour(sessions: GameSession[]): number {
@@ -273,25 +254,21 @@ export class SessionDatabase {
   }
 
   async recalculateOptimalStartHour(): Promise<void> {
-    if (!this.db) {
-      throw new Error('Database not initialized');
-    }
+    const db = this.ensureDb();
 
     const allSessions = await this.getAllSessions();
     const optimalStartHour = SessionDatabase.calculateOptimalStartHour(allSessions);
 
-    await this.db.put(METADATA_STORE, {
+    await db.put(METADATA_STORE, {
       lastCalculated: new Date(),
       optimalStartHour,
     }, 'timeline');
   }
 
   async getOptimalStartHour(): Promise<number> {
-    if (!this.db) {
-      throw new Error('Database not initialized');
-    }
+    const db = this.ensureDb();
 
-    const metadata = await this.db.get(METADATA_STORE, 'timeline');
+    const metadata = await db.get(METADATA_STORE, 'timeline');
 
     if (metadata) {
       return metadata.optimalStartHour;
@@ -299,9 +276,8 @@ export class SessionDatabase {
 
     // If no metadata exists, calculate and store it
     await this.recalculateOptimalStartHour();
-    const newMetadata = await this.db.get(METADATA_STORE, 'timeline');
 
-    return newMetadata?.optimalStartHour ?? 0;
+    return (await db.get(METADATA_STORE, 'timeline'))?.optimalStartHour ?? 0;
   }
 
   isDatabaseInitialized(): boolean {

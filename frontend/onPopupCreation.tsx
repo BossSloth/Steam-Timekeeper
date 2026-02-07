@@ -1,6 +1,6 @@
 import { usePopupsStore } from 'components/stores/popupsStore';
 import { initMainWindow, MAIN_WINDOW_NAME, mainWindow } from 'shared';
-import { MainWindowPopup, Popup } from 'steam-types/Global/Managers/PopupManager';
+import { MainWindowPopup, Popup } from 'steam-types/Global/managers/PopupManager';
 
 export function OnPopupCreation(popup: Popup | undefined): void {
   if (!popup) return;

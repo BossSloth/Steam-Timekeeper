@@ -269,6 +269,10 @@ export function SessionBlock({
     return classes.join(' ');
   }, [isSelected, isStartDay, isEndDay, isHovered, position.width, splitPart]);
 
+  if (appData === null) {
+    return null;
+  }
+
   return (
     <button
       type="button"

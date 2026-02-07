@@ -215,6 +215,14 @@ export const MOCK_SESSIONS: GameSession[] = [
     markerEntries: [],
     accountId: '987654321',
   },
+  {
+    appId: '730', // Counter-Strike 2
+    startTime: easyDate(Day.Mon, '02:00', 1),
+    endTime: easyDate(Day.Mon, '03:30', 1),
+    achievementEntries: [],
+    markerEntries: [],
+    accountId: '987654321',
+  },
 ];
 
 export const MOCK_APP_DATA: Record<string, AppData> = {

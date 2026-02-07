@@ -23,8 +23,8 @@ export function Timeline({
     const dayEnd = getDateAtEndOfDay(dayDate);
 
     return sessions.filter((session) => {
-      const sessionStart = new Date(session.startTime);
-      const sessionEnd = new Date(session.endTime);
+      const sessionStart = session.startTime;
+      const sessionEnd = session.endTime;
 
       return (
         (sessionStart >= dayStart && sessionStart <= dayEnd)

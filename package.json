@@ -6,7 +6,8 @@
     "dev-build": "millennium-ttc --build dev --watch",
     "sass": "sass ./public/steam-timekeeper.scss:./public/steam-timekeeper.css --style compressed --embed-sources --embed-source-map",
     "dev": "nodemon --watch public/steam-timekeeper.scss --ext scss --exec \"npm run sass && npm run dev-build\"",
-    "build": "npm run sass && millennium-ttc --build prod"
+    "build": "npm run sass && millennium-ttc --build prod",
+    "lint": "bun eslint"
   },
   "devDependencies": {
     "@eslint/js": "^9.38.0",
