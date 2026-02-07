@@ -6,7 +6,18 @@ export const MOCK_SESSIONS: GameSession[] = [
   {
     appId: '1091500', // Cyberpunk 2077
     startTime: easyDate(Day.Mon, '22:30'),
-    endTime: easyDate(Day.Tue, '02:15'),
+    endTime: easyDate(Day.Tue, '01:15'),
+    achievementEntries: [
+      { id: 'a1', time: easyDate(Day.Mon, '23:15'), type: TimelineEntryType.Achievement, achievementId: 'ACH_NIGHT_CITY_DREAMER' },
+      { id: 'a2', time: easyDate(Day.Tue, '01:30'), type: TimelineEntryType.Achievement, achievementId: 'ACH_STREET_CRED_10' },
+    ],
+    markerEntries: [],
+    accountId: null,
+  },
+  {
+    appId: '1091500', // Cyberpunk 2077
+    startTime: easyDate(Day.Tue, '1:30'),
+    endTime: easyDate(Day.Tue, '04:20'),
     achievementEntries: [
       { id: 'a1', time: easyDate(Day.Mon, '23:15'), type: TimelineEntryType.Achievement, achievementId: 'ACH_NIGHT_CITY_DREAMER' },
       { id: 'a2', time: easyDate(Day.Tue, '01:30'), type: TimelineEntryType.Achievement, achievementId: 'ACH_STREET_CRED_10' },

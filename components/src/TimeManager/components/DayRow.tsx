@@ -133,7 +133,7 @@ export function SessionBlock({
   hasMidnightSessions,
   position,
 }: SessionBlockProps): React.ReactNode {
-  const { steamDataStore, selectedSession, hoveredSessionId, setSelectedSession, setHoveredSessionId } = useTimelineContext();
+  const { steamDataStore, selectedSession, hoveredSessionId, setSelectedSession, setHoveredSessionId, timelineStartHour } = useTimelineContext();
   const { id } = session;
   const [appData, setAppData] = useState<AppData | null>(null);
   const [friendData, setFriendData] = useState<FriendData | null>(null);
@@ -194,8 +194,11 @@ export function SessionBlock({
   const topPosition = React.useMemo(() => {
     if (!hasMidnightSessions) return undefined;
 
-    return isEndDay ? '8px' : '78px';
-  }, [hasMidnightSessions, isEndDay]);
+    const startHour = session.startTime.getHours() + session.startTime.getMinutes() / 60;
+    const isAfterMidnight = isEndDay || (!spansMidnight && startHour < timelineStartHour);
+
+    return isAfterMidnight ? '8px' : '78px';
+  }, [hasMidnightSessions, isEndDay, spansMidnight, session.startTime, timelineStartHour]);
 
   const sessionClasses = React.useMemo(() => {
     const classes = ['tm-session'];
