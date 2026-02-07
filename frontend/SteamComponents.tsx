@@ -44,7 +44,7 @@ interface GenericDialogProps {
    */
   readonly onlyPopoutIfNeeded?: boolean;
 
-  readonly refPopup?: React.RefObject<HTMLDivElement>;
+  readonly refPopup?: React.RefObject<HTMLDivElement | null>;
 
   readonly titleBarClassName?: string;
 
