@@ -1,7 +1,9 @@
 /* eslint-disable no-await-in-loop */
 import { DBSchema, IDBPDatabase, openDB } from 'idb';
+import { MINIMUM_SESSION_DURATION_MINUTES } from './Constants';
 import { MOCK_SESSIONS } from './MockSessions';
 import { AppTimes, GameSession } from './Types';
+import { getDuration } from './utils';
 
 const DB_NAME = 'SteamTimekeeperDB';
 const DB_VERSION = 2;
@@ -109,6 +111,12 @@ export class SessionDatabase {
         cursor.value.accountId = null;
         await cursor.update(cursor.value);
       }
+
+      const duration = getDuration(cursor.value);
+      if (duration < MINIMUM_SESSION_DURATION_MINUTES) {
+        await cursor.delete();
+      }
+
       cursor = await cursor.continue();
     }
   }

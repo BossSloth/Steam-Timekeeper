@@ -1,4 +1,4 @@
-import { GameSession } from '@components/TimeManager';
+import { GameSession, getDuration, MINIMUM_SESSION_DURATION_MINUTES } from '@components/TimeManager';
 import { container } from 'shared';
 
 const CHECK_INTERVAL = 10000;
@@ -53,18 +53,16 @@ async function checkRunningApps(): Promise<void> {
       if (currentRunningApp !== undefined) {
         await onFriendAppQuit(friend.accountid.toString());
       }
-      await onFriendAppLaunched(appIdStr, friend.accountid.toString());
+      onFriendAppLaunched(appIdStr, friend.accountid.toString());
     }
   });
 
   await Promise.all(friendOperations);
 }
 
-async function onAppLaunched(appId: string): Promise<void> {
+function onAppLaunched(appId: string): void {
   console.debug(`%cApp ${appId} is now running`, 'color: green; font-size: 46px');
   runningApps.add(appId);
-
-  const { sessionDB } = container;
 
   const session: GameSession = {
     achievementEntries: [],
@@ -74,15 +72,12 @@ async function onAppLaunched(appId: string): Promise<void> {
     markerEntries: [],
     startTime: new Date(),
   };
-  session.id = await sessionDB.addSession(session);
   runningSessions.set(appId, session);
 }
 
-async function onFriendAppLaunched(appId: string, accountId: string): Promise<void> {
+function onFriendAppLaunched(appId: string, accountId: string): void {
   console.debug(`%cApp ${appId} is now running for friend ${accountId}`, 'color: green; font-size: 46px');
   runningFriendApps.set(accountId, appId);
-
-  const { sessionDB } = container;
 
   const session: GameSession = {
     achievementEntries: [],
@@ -92,7 +87,6 @@ async function onFriendAppLaunched(appId: string, accountId: string): Promise<vo
     markerEntries: [],
     startTime: new Date(),
   };
-  session.id = await sessionDB.addSession(session);
   runningFriendSessions.set(accountId, session);
 }
 
@@ -105,7 +99,15 @@ async function onAppHeartbeat(appId: string): Promise<void> {
   const { sessionDB } = container;
 
   session.endTime = new Date();
-  await sessionDB.updateSession(session);
+  const durationMinutes = getDuration(session);
+
+  if (session.id === undefined) {
+    if (durationMinutes >= MINIMUM_SESSION_DURATION_MINUTES) {
+      session.id = await sessionDB.addSession(session);
+    }
+  } else {
+    await sessionDB.updateSession(session);
+  }
 }
 
 async function onFriendAppHeartbeat(accountId: string): Promise<void> {
@@ -117,7 +119,15 @@ async function onFriendAppHeartbeat(accountId: string): Promise<void> {
   const { sessionDB } = container;
 
   session.endTime = new Date();
-  await sessionDB.updateSession(session);
+  const durationMinutes = getDuration(session);
+
+  if (session.id === undefined) {
+    if (durationMinutes >= MINIMUM_SESSION_DURATION_MINUTES) {
+      session.id = await sessionDB.addSession(session);
+    }
+  } else {
+    await sessionDB.updateSession(session);
+  }
 }
 
 async function onAppQuit(appId: string): Promise<void> {
@@ -130,7 +140,15 @@ async function onAppQuit(appId: string): Promise<void> {
   const { sessionDB } = container;
 
   session.endTime = new Date();
-  await sessionDB.updateSession(session);
+  const durationMinutes = getDuration(session);
+
+  if (durationMinutes >= MINIMUM_SESSION_DURATION_MINUTES) {
+    if (session.id === undefined) {
+      await sessionDB.addSession(session);
+    } else {
+      await sessionDB.updateSession(session);
+    }
+  }
 
   runningApps.delete(appId);
   runningSessions.delete(appId);
@@ -146,7 +164,15 @@ async function onFriendAppQuit(accountId: string): Promise<void> {
   const { sessionDB } = container;
 
   session.endTime = new Date();
-  await sessionDB.updateSession(session);
+  const durationMinutes = getDuration(session);
+
+  if (durationMinutes >= MINIMUM_SESSION_DURATION_MINUTES) {
+    if (session.id === undefined) {
+      await sessionDB.addSession(session);
+    } else {
+      await sessionDB.updateSession(session);
+    }
+  }
 
   runningFriendApps.delete(accountId);
   runningFriendSessions.delete(accountId);

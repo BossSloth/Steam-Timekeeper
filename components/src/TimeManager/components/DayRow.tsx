@@ -1,7 +1,7 @@
 /* eslint-disable react/no-multi-comp */
 import React, { useCallback, useEffect, useState } from 'react';
 import { AppData, FriendData } from '../../SteamDataStore/ISteamDataStore';
-import { HOURS_PER_DAY, MINIMUM_SESSION_DURATION_MINUTES, UNKNOWN_IMAGE } from '../Constants';
+import { HOURS_PER_DAY, UNKNOWN_IMAGE } from '../Constants';
 import { useTimelineContext } from '../contexts/TimelineContext';
 import { Day, GameSession } from '../Types';
 import { SessionPosition, formatDuration, generateGameColor, getDateAtMidnight, getDuration, getSessionDayInfo, getSessionEndHour, getSessionStartHour } from '../utils';
@@ -235,7 +235,7 @@ export function SessionBlock({
     };
   }, [steamDataStore, session.accountId]);
 
-  if (id === undefined || getDuration(session) < MINIMUM_SESSION_DURATION_MINUTES) {
+  if (id === undefined) {
     return null;
   }
   const { sessionStartDay, sessionEndDay, spansMidnight } = getSessionDayInfo(session);
