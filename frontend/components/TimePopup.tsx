@@ -30,3 +30,8 @@ export function TimePopup(): React.ReactNode {
 }
 
 routerHook.addGlobalComponent('TimePopup', () => <TimePopup />, EUIMode.Desktop);
+
+export function openTimePopup(): void {
+  const state = usePopupsStore.getState();
+  state.setTimePopup({ open: true });
+}

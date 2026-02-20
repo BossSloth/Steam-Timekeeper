@@ -1,7 +1,7 @@
 /* eslint-disable no-await-in-loop */
 import { DBSchema, IDBPDatabase, openDB } from 'idb';
 import { MOCK_SESSIONS } from './MockSessions';
-import { GameSession } from './Types';
+import { AppTimes, GameSession } from './Types';
 
 const DB_NAME = 'SteamTimekeeperDB';
 const DB_VERSION = 2;
@@ -282,5 +282,83 @@ export class SessionDatabase {
 
   isDatabaseInitialized(): boolean {
     return this.db !== null;
+  }
+
+  private static emptyAppTimes(): AppTimes {
+    return { lastPlayedTime: null, totalMinutes: 0, lastTwoWeeksMinutes: 0 };
+  }
+
+  private static accumulateSession(
+    result: AppTimes,
+    session: GameSession,
+    twoWeeksAgo: Date,
+  ): void {
+    const durationMinutes = (session.endTime.getTime() - session.startTime.getTime()) / (1000 * 60);
+
+    result.totalMinutes += durationMinutes;
+    if (session.endTime > twoWeeksAgo) {
+      result.lastTwoWeeksMinutes += durationMinutes;
+    }
+    if (result.lastPlayedTime === null || session.endTime > result.lastPlayedTime) {
+      result.lastPlayedTime = session.endTime;
+    }
+  }
+
+  private static roundResult(result: AppTimes): AppTimes {
+    return {
+      lastPlayedTime: result.lastPlayedTime,
+      totalMinutes: Math.round(result.totalMinutes),
+      lastTwoWeeksMinutes: Math.round(result.lastTwoWeeksMinutes),
+    };
+  }
+
+  /**
+   * Gets the total playtime and last two weeks playtime for a specific app.
+   * @param appId The app ID to get the playtime for.
+   * @returns An object containing the last played time, total minutes, and last two weeks minutes.
+   */
+  public async getAppTimes(appId: string): Promise<AppTimes> {
+    const db = this.ensureDb();
+    const tx = db.transaction(SESSIONS_STORE, 'readonly');
+    const index = tx.store.index('appId');
+    const twoWeeksAgo = new Date(Date.now() - 14 * 24 * 60 * 60 * 1000);
+    const result = SessionDatabase.emptyAppTimes();
+
+    let cursor = await index.openCursor(IDBKeyRange.only(appId));
+
+    while (cursor) {
+      SessionDatabase.accumulateSession(result, cursor.value, twoWeeksAgo);
+      cursor = await cursor.continue();
+    }
+
+    return SessionDatabase.roundResult(result);
+  }
+
+  public async getMultipleAppTimes(appIds: string[]): Promise<AppTimes[]> {
+    if (appIds.length === 0) {
+      return [];
+    }
+
+    const db = this.ensureDb();
+    const tx = db.transaction(SESSIONS_STORE, 'readonly');
+    const index = tx.store.index('appId');
+    const twoWeeksAgo = new Date(Date.now() - 14 * 24 * 60 * 60 * 1000);
+
+    const results = new Map(appIds.map(id => [id, SessionDatabase.emptyAppTimes()]));
+
+    let cursor = await index.openCursor();
+
+    while (cursor) {
+      const session = cursor.value;
+      const result = results.get(session.appId);
+
+      if (result !== undefined) {
+        SessionDatabase.accumulateSession(result, session, twoWeeksAgo);
+      }
+
+      cursor = await cursor.continue();
+    }
+
+    return appIds.map(id => SessionDatabase.roundResult(results.get(id) ?? SessionDatabase.emptyAppTimes()));
   }
 }

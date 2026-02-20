@@ -1,6 +1,7 @@
 import { Container } from '@components/Container';
 import { callable } from '@steambrew/client';
 import { SteamDataStore } from 'SteamDataStore';
+import { registerLibraryHomePatch } from 'libraryPatchers';
 import { OnPopupCreation } from 'onPopupCreation';
 import { startCheckRunningApps } from 'runningApps';
 import { container, initComponentsPublicDir, initContainer } from 'shared';
@@ -18,18 +19,20 @@ export default async function PluginMain(): Promise<void> {
 
   initComponentsPublicDir(componentsPublicDir.replaceAll('\\', '/'));
 
-  const wnd = g_PopupManager.GetExistingPopup('SP Desktop_uid0');
-  if (wnd) {
-    OnPopupCreation(wnd);
-  }
-  g_PopupManager.AddPopupCreatedCallback(OnPopupCreation);
-
   initContainer(new Container(
     new SteamDataStore(),
     false,
   ));
 
   await container.sessionDB.initialize();
+
+  const wnd = g_PopupManager.GetExistingPopup('SP Desktop_uid0');
+  if (wnd) {
+    OnPopupCreation(wnd);
+  }
+  g_PopupManager.AddPopupCreatedCallback(OnPopupCreation);
+
+  registerLibraryHomePatch();
 
   startCheckRunningApps();
   gameRecordingRequestHandler.RegisterForNotifyTimelineEntryChanged((notification: ProtobufNotification<CGameRecording_TimelineEntryChanged_Notification>) => {

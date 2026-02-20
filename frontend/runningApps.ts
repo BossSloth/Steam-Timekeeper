@@ -113,7 +113,6 @@ async function onFriendAppHeartbeat(accountId: string): Promise<void> {
   if (!session) {
     return;
   }
-  console.debug(`%cApp ${session.appId} is now running for friend ${accountId}`, 'color: green; font-size: 46px');
 
   const { sessionDB } = container;
 

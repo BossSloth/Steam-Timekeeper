@@ -87,3 +87,9 @@ export enum Day {
 }
 
 export const DAYS = Object.values(Day);
+
+export interface AppTimes {
+  lastPlayedTime: Date | null;
+  lastTwoWeeksMinutes: number;
+  totalMinutes: number;
+}
