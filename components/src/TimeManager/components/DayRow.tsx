@@ -1,7 +1,7 @@
 /* eslint-disable react/no-multi-comp */
 import React, { useCallback, useEffect, useState } from 'react';
 import { AppData, FriendData } from '../../SteamDataStore/ISteamDataStore';
-import { HOURS_PER_DAY, MINIMUM_SESSION_DURATION } from '../Constants';
+import { HOURS_PER_DAY, MINIMUM_SESSION_DURATION_MINUTES, UNKNOWN_IMAGE } from '../Constants';
 import { useTimelineContext } from '../contexts/TimelineContext';
 import { Day, GameSession } from '../Types';
 import { SessionPosition, formatDuration, generateGameColor, getDateAtMidnight, getDuration, getSessionDayInfo, getSessionEndHour, getSessionStartHour } from '../utils';
@@ -235,7 +235,7 @@ export function SessionBlock({
     };
   }, [steamDataStore, session.accountId]);
 
-  if (id === undefined || getDuration(session) < MINIMUM_SESSION_DURATION) {
+  if (id === undefined || getDuration(session) < MINIMUM_SESSION_DURATION_MINUTES) {
     return null;
   }
   const { sessionStartDay, sessionEndDay, spansMidnight } = getSessionDayInfo(session);
@@ -269,10 +269,6 @@ export function SessionBlock({
     return classes.join(' ');
   }, [isSelected, isStartDay, isEndDay, isHovered, position.width, splitPart]);
 
-  if (appData === null) {
-    return null;
-  }
-
   return (
     <button
       type="button"
@@ -297,11 +293,11 @@ export function SessionBlock({
       }}
     >
       <div className="tm-session-content">
-        <span className="tm-session-icon" title={appData.name}>
-          <img src={appData.icon} alt={appData.name} />
+        <span className="tm-session-icon" title={appData?.name ?? session.appId}>
+          <img src={appData?.icon ?? UNKNOWN_IMAGE} alt={appData?.name ?? ''} />
         </span>
         <div className="tm-session-info">
-          <div className="tm-session-name">{appData.name}</div>
+          <div className="tm-session-name">{appData?.name ?? session.appId}</div>
           <div className="tm-session-time">{formatDuration(getDuration(session))}</div>
         </div>
         {friendData && (

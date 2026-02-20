@@ -3,10 +3,11 @@ import { beforePatch } from '@steambrew/client';
 import { LastPlayed, Playtime } from 'components/PlayBar';
 import { openTimePopup } from 'components/TimePopup';
 import React from 'react';
-import { container, mainWindow, NON_STEAM_APP_APPID_MASK, WaitForElement } from 'shared';
+import { container, mainWindow, WaitForElement } from 'shared';
 import { SteamAppOverview } from 'steam-types/Global/stores/AppStore';
 import { formatPlaytime, HomeAppClasses, PlayBarClasses } from 'SteamFunctions';
 import { getReactFiberFromNode, renderComponent } from './util';
+import { NON_STEAM_APP_APPID_MASK } from '@components/TimeManager/Constants';
 
 export async function patchLibraryApp(window: Window, appId: string): Promise<void> {
   const app = appStore.m_mapApps.get(Number(appId));

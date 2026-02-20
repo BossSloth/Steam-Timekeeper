@@ -4,6 +4,7 @@ import { AppData, FriendData, ISteamDataStore } from '../../SteamDataStore/IStea
 import { GameSession } from '../Types';
 import { getDuration } from '../utils';
 import { formatDuration, formatTime } from '../utils/dateUtils';
+import { UNKNOWN_IMAGE } from '../Constants';
 
 interface SessionDetailsPanelProps {
   onClose(): void;
@@ -58,11 +59,11 @@ function SessionDetailsPanel({ session, steamDataStore, onClose }: SessionDetail
       <div className="tm-details-header">
         <div className="tm-details-game">
           <span className="tm-details-icon">
-            <img src={appData?.icon} alt={appData?.name} />
+            <img src={appData?.icon ?? UNKNOWN_IMAGE} alt={appData?.name ?? ''} />
           </span>
           <div>
             <div className="tm-details-title-row">
-              <h2 className="tm-details-title">{appData?.name}</h2>
+              <h2 className="tm-details-title">{appData?.name ?? `Non-steam app ${session.appId}`}</h2>
               {friendData && (
                 <div className="tm-details-friend">
                   <img src={friendData.avatarUrl} alt={friendData.displayName} className="tm-details-friend-avatar" />

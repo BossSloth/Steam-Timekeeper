@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/class-methods-use-this */
 import { AppAchievements, AppData, FriendData, ISteamDataStore } from '@components/SteamDataStore/ISteamDataStore';
-import { CURRENT_USER_ID } from '@components/TimeManager/Constants';
+import { CURRENT_USER_ID, NON_STEAM_APP_APPID_MASK } from '@components/TimeManager/Constants';
 import { AppInfo } from 'steam-types/Global/stores/AppInfoStore';
 import { SteamFriend } from 'steam-types/Global/stores/FriendStore/FriendStore';
 import { sleep } from 'steam-types/Runtime/helpers';
@@ -96,6 +96,10 @@ export class SteamDataStore implements ISteamDataStore {
   }
 
   async getRemoteAppData(appId: string): Promise<AppData | null> {
+    if (Number(appId) >= NON_STEAM_APP_APPID_MASK) {
+      return null;
+    }
+
     let appInfo: AppInfo = appInfoStore.GetAppInfo(Number(appId));
     while (!appInfo.is_initialized) {
       // eslint-disable-next-line no-await-in-loop

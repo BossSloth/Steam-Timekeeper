@@ -4,8 +4,6 @@ import * as ReactDOM from 'react-dom';
 import * as ReactDOMClient from 'react-dom/client';
 import { BasicPopup } from 'steam-types/Global/managers/PopupManager';
 
-export const NON_STEAM_APP_APPID_MASK = 0x80000000;
-
 export let mainWindow: Window;
 
 export function initMainWindow(_mainWindow: Window): void {
